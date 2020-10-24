@@ -1,13 +1,22 @@
 package ar.edu.itba.pod.tpe.models;
 
-public class Tree {
-    private String neighbourhood_name;
+import com.hazelcast.nio.ObjectDataInput;
+import com.hazelcast.nio.ObjectDataOutput;
+import com.hazelcast.nio.serialization.DataSerializable;
+
+import java.io.IOException;
+
+public class Tree implements DataSerializable {
     private String street_name;
     private String common_name;
-    private String diameter;
+    private double diameter;
 
-    public Tree(String neighbourhood_name, String street_name, String common_name, String diameter) {
-        this.neighbourhood_name = neighbourhood_name;
+    // Empty constructor for Hazelcast
+    public Tree() {
+
+    }
+
+    public Tree(String street_name, String common_name, double diameter) {
         this.street_name = street_name;
         this.common_name = common_name;
         this.diameter = diameter;
@@ -15,7 +24,20 @@ public class Tree {
 
     @Override
     public String toString() {
-        return neighbourhood_name + "--" + street_name + "--"
-                            + common_name + "--" +  diameter;
+        return street_name + "--" + common_name + "--" +  diameter;
+    }
+
+    @Override
+    public void writeData(ObjectDataOutput out) throws IOException {
+        out.writeUTF(street_name);
+        out.writeUTF(common_name);
+        out.writeDouble(diameter);
+    }
+
+    @Override
+    public void readData(ObjectDataInput in) throws IOException {
+        street_name = in.readUTF();
+        common_name = in.readUTF();
+        diameter = in.readDouble();
     }
 }
