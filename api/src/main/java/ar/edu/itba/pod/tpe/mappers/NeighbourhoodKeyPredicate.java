@@ -5,24 +5,22 @@ import com.hazelcast.mapreduce.KeyPredicate;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
-public class NeighbourhoodKeyPredicate implements KeyPredicate<String>, Serializable {
+public class NeighbourhoodKeyPredicate implements KeyPredicate<Neighbourhood> {
 
-    private List<Neighbourhood> neighbourhoodList;
+    private Map<String, Integer> neighbourhoodMap;
 
     public NeighbourhoodKeyPredicate() {
     }
 
-    public NeighbourhoodKeyPredicate(List<Neighbourhood> neighbourhoodList) {
-        this.neighbourhoodList = neighbourhoodList;
+    public NeighbourhoodKeyPredicate(Map<String, Integer> neighbourhoodMap) {
+        this.neighbourhoodMap = neighbourhoodMap;
     }
 
     @Override
-    public boolean evaluate(String tree) {
-        for(Neighbourhood n : neighbourhoodList){
-            if(n.getName().equals(tree))
-                return true;
-        }
-        return false;
+    public boolean evaluate(Neighbourhood neighbourhood) {
+        return neighbourhoodMap.containsKey(neighbourhood.getName());
     }
+
 }

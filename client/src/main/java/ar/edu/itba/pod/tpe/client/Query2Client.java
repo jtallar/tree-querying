@@ -37,7 +37,7 @@ public class Query2Client {
 
     private static List<String> clusterAddresses = new ArrayList<>();
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         logger.info("tpe2-g6 Query2 Starting ...");
 
         try {
@@ -56,33 +56,34 @@ public class Query2Client {
         JobTracker jobTracker = hz.getJobTracker("tree-street");
 
 
-        List<Neighbourhood> neig = Parser.parseNeighbourhood("/Users/nicolas/Downloads/csvs_POD/barriosBUE.csv");
-        List<Tree> trees = Parser.parseBUETrees("/Users/nicolas/Downloads/csvs_POD/arbolesBUE.csv");
+        Map<String, Integer>  neigh;
+        try {
+            neigh = Parser.parseNeighbourhood("/Users/nicolas/Downloads/csvs_POD/", City.of("BUE"));
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
+            System.exit(ERROR_STATUS);
+            return;
+        }
 
 
-        final IList<Neighbourhood> neighbourhoodIList = hz.getList("neigbourhoods");
-        final IList<Tree> treeIList = hz.getList("tree");
+        final IMap<Neighbourhood, List<Tree>> hzTree = hz.getMap("g6-query2");
+        hzTree.clear();
+        try {
+            hzTree.putAll(Parser.parseTrees("/Users/nicolas/Downloads/csvs_POD/", City.of("BUE")));
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
+            System.exit(ERROR_STATUS);
+            return;
+        }
 
-        System.out.println(trees.get(0).toString());
-        System.out.println(neig.get(0).toString());
 
-        neighbourhoodIList.clear();
-        treeIList.clear();
-        neighbourhoodIList.addAll(neig);
-        treeIList.addAll(trees);
+        final KeyValueSource<Neighbourhood, List<Tree>> source = KeyValueSource.fromMap(hzTree);
+        final Job<Neighbourhood, List<Tree>> job = jobTracker.newJob(source);
 
-        System.out.println(treeIList.size());
-        System.out.println(neighbourhoodIList.size());
-
-        final KeyValueSource<String, Tree> source = KeyValueSource.fromList(treeIList);
-        final Job<String, Tree> job = jobTracker.newJob(source);
-
-/*        System.out.println(treeIList.get(0).toString());
-        System.out.println(neighbourhoodIList.get(0).toString());*/
 
         logger.info("Inicio del map/reduce");
         final JobCompletableFuture<Map<TreeStreet, Long>> future = job
-        //        .keyPredicate(new NeighbourhoodKeyPredicate(neighbourhoodIList))
+                .keyPredicate(new NeighbourhoodKeyPredicate(neigh))
                 .mapper(new TreeStreetMapper())
                 .reducer(new TreeStreetReducer())
                 .submit();
@@ -90,13 +91,13 @@ public class Query2Client {
         // Wait and retrieve result
         Map<TreeStreet, Long> result = new HashMap<>();
 
-        System.out.println(result.size());
         try {
             result = future.get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
 
+        System.out.println(result.size());
         logger.info("Fin del map/reduce");
         for(TreeStreet t : result.keySet()){
             System.out.println(t.getNeighbourhood() + ' ' + t.getTree() + ' ' + result.get(t));

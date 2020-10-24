@@ -2,7 +2,6 @@ package ar.edu.itba.pod.tpe.client;
 
 import ar.edu.itba.pod.tpe.models.Neighbourhood;
 import ar.edu.itba.pod.tpe.models.Tree;
-import org.omg.CORBA.COMM_FAILURE;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
