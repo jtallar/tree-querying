@@ -2,6 +2,7 @@ package ar.edu.itba.pod.tpe.client;
 
 import ar.edu.itba.pod.tpe.client.exceptions.ArgumentException;
 import ar.edu.itba.pod.tpe.mappers.TestMapper;
+import ar.edu.itba.pod.tpe.models.Tree;
 import ar.edu.itba.pod.tpe.reducers.TestReducer;
 import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.client.config.ClientConfig;
@@ -14,6 +15,7 @@ import com.hazelcast.mapreduce.KeyValueSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.URISyntaxException;
 import java.util.*;
@@ -30,41 +32,49 @@ public class TestClient {
     public static void main(String[] args) {
         logger.info("tpe2-g6 TestClient Starting ...");
 
+//        try {
+//            argumentParsing();
+//        } catch (ArgumentException e) {
+//            System.err.println(e.getMessage());
+//            System.exit(ERROR_STATUS);
+//            return;
+//        }
+
         try {
-            argumentParsing();
-        } catch (ArgumentException e) {
+            System.out.println(Parser.parseTrees("/home/julian/Desktop/POD/tpe2-g6/test-files/arbolesBUE.csv", City.of("BUE")));
+        } catch (IOException e) {
             System.err.println(e.getMessage());
             System.exit(ERROR_STATUS);
             return;
         }
 
-        ClientConfig config = new ClientConfig();
-        config.getGroupConfig().setName("g6-cluster").setPassword("123456");
-        config.getNetworkConfig().addAddress(clusterAddresses.toArray(new String[0]));
-        HazelcastInstance hz = HazelcastClient.newHazelcastClient(config);
-
-        JobTracker jobTracker = hz.getJobTracker("word-count");
-
-        final IMap<String, String> map = hz.getMap("libros");
-        final KeyValueSource<String, String> source = KeyValueSource.fromMap(map);
-        final Job<String, String> job = jobTracker.newJob(source);
-        final JobCompletableFuture<Map<String, Long>> future = job
-//                .keyPredicate(new WordCountKeyPredicate())
-                .mapper(new TestMapper())
-//                .combiner(new WordCountCombinerFactory())
-                .reducer(new TestReducer())
-                .submit();
-
-        // Wait and retrieve result
-        Map<String, Long> result = new HashMap<>();
-        try {
-             result = future.get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-        System.out.println(result);
-
-        hz.shutdown();
+//        ClientConfig config = new ClientConfig();
+//        config.getGroupConfig().setName("g6-cluster").setPassword("123456");
+//        config.getNetworkConfig().addAddress(clusterAddresses.toArray(new String[0]));
+//        HazelcastInstance hz = HazelcastClient.newHazelcastClient(config);
+//
+//        JobTracker jobTracker = hz.getJobTracker("g6-word-count");
+//
+//        final IMap<String, String> map = hz.getMap("libros");
+//        final KeyValueSource<String, String> source = KeyValueSource.fromMap(map);
+//        final Job<String, String> job = jobTracker.newJob(source);
+//        final JobCompletableFuture<Map<String, Long>> future = job
+////                .keyPredicate(new WordCountKeyPredicate())
+//                .mapper(new TestMapper())
+////                .combiner(new WordCountCombinerFactory())
+//                .reducer(new TestReducer())
+//                .submit();
+//
+//        // Wait and retrieve result
+//        Map<String, Long> result = new HashMap<>();
+//        try {
+//             result = future.get();
+//        } catch (InterruptedException | ExecutionException e) {
+//            e.printStackTrace();
+//        }
+//        System.out.println(result);
+//
+//        hz.shutdown();
     }
 
     private static void argumentParsing() throws ArgumentException {
