@@ -1,5 +1,7 @@
-import models.Neighbourhood;
-import models.Tree;
+package ar.edu.itba.pod.tpe.client;
+
+import ar.edu.itba.pod.tpe.models.Neighbourhood;
+import ar.edu.itba.pod.tpe.models.Tree;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

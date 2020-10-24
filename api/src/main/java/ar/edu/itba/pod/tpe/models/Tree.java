@@ -1,4 +1,4 @@
-package models;
+package ar.edu.itba.pod.tpe.models;
 
 public class Tree {
     private String neighbourhood_name;

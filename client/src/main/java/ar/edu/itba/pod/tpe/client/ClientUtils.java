@@ -1,10 +1,10 @@
-package ar.edu.itba.pod.tpe;
+package ar.edu.itba.pod.tpe.client;
 
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-public class ArgumentUtils {
+public class ClientUtils {
     public static InetSocketAddress getInetAddress(String hostPort) throws URISyntaxException {
         if (hostPort == null) throw new URISyntaxException("", "URI can't be null");
         URI uri = new URI("my://" + hostPort);
