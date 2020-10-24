@@ -10,6 +10,10 @@ public enum City {
         this.abbreviation = abbreviation;
     }
 
+    public String getAbbreviation() {
+        return abbreviation;
+    }
+
     public static City of(String abbreviation) {
         for (City a : values()) {
             if (a.abbreviation.equals(abbreviation))

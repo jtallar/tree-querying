@@ -8,11 +8,14 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Parser {
+
+    private static final String TREES_FILE_PREFIX = "arboles";
+    private static final String NEIGHBOURHOODS_FILE_PREFIX = "barrios";
+    private static final String FILE_EXTENSION = ".csv";
 
     /** BUE **/
     private static final int COMUNA = 2;
@@ -26,35 +29,73 @@ public class Parser {
     private static final int NEIGHBOURHOOD_NAME = 12;
     private static final int DIAMETER = 15;
 
-    public static List<Tree> parseTrees(String inPath, City city) throws IOException {
+    // directoryPath termina en / . Eg: /home/julian/Desktop/POD/tpe2-g6/test-files/
+    /*public static Map<Neighbourhood, List<Tree>> parseTreesMapWithNeighbours(String directoryPath, City city, boolean withPopulation) throws IOException {
         int[] headersIndex = getHeaderNumbers(city);
 
-        List<Tree> trees = new ArrayList<>();
+        Map<String, Integer> neighbourhoods = new HashMap<>();
+        if (withPopulation) neighbourhoods = parseNeighbourhoodMap(directoryPath, city);
+
+        Map<Neighbourhood, List<Tree>> trees = new HashMap<>();
         //Elimino el header
-        List<String> file = Files.readAllLines(Paths.get(inPath), StandardCharsets.ISO_8859_1)
+        List<String> file = Files.readAllLines(Paths.get(directoryPath + TREES_FILE_PREFIX + city.getAbbreviation() + FILE_EXTENSION), StandardCharsets.ISO_8859_1)
                 .stream().skip(1).collect(Collectors.toList());
 
         for(String line : file ) {
             String[] parse = line.split(";");
-            trees.add(new Tree(parse[headersIndex[0]], parse[headersIndex[1]],
-                    parse[headersIndex[2]], parse[headersIndex[3]]));
+            String neighbourhoodName = parse[headersIndex[0]];
+
+            if (withPopulation) {
+                Optional.ofNullable(neighbourhoods.get(neighbourhoodName)).ifPresent(population -> {
+                    Neighbourhood neighbourhood = new Neighbourhood(neighbourhoodName, population);
+                    trees.computeIfAbsent(neighbourhood, k -> new ArrayList<>());
+                    trees.get(neighbourhood).add(new Tree(parse[headersIndex[1]], parse[headersIndex[2]], Double.valueOf(parse[headersIndex[3]])));
+                });
+            } else {
+                Neighbourhood neighbourhood = new Neighbourhood(neighbourhoodName);
+                trees.computeIfAbsent(neighbourhood, k -> new ArrayList<>());
+                trees.get(neighbourhood).add(new Tree(parse[headersIndex[1]], parse[headersIndex[2]], Double.valueOf(parse[headersIndex[3]])));
+            }
+        }
+
+        return trees;
+    }*/
+
+    // directoryPath termina en / . Eg: /home/julian/Desktop/POD/tpe2-g6/test-files/
+    // FIXME> ESTE Y EL DE ABAJO SERIAN LOS QUE QUEDEN SI FUNCA LO DEL KEYPREDICATE
+    public static Map<Neighbourhood, List<Tree>> parseTrees(String directoryPath, City city) throws IOException {
+        int[] headersIndex = getHeaderNumbers(city);
+
+        Map<Neighbourhood, List<Tree>> trees = new HashMap<>();
+        //Elimino el header
+        List<String> file = Files.readAllLines(Paths.get(directoryPath + TREES_FILE_PREFIX + city.getAbbreviation() + FILE_EXTENSION), StandardCharsets.ISO_8859_1)
+                .stream().skip(1).collect(Collectors.toList());
+
+        for(String line : file ) {
+            String[] parse = line.split(";");
+            Neighbourhood neighbourhood = new Neighbourhood(parse[headersIndex[0]]);
+            trees.computeIfAbsent(neighbourhood, k -> new ArrayList<>());
+            trees.get(neighbourhood).add(new Tree(parse[headersIndex[1]], parse[headersIndex[2]], Double.valueOf(parse[headersIndex[3]])));
         }
 
         return trees;
     }
 
-    private static int[] getHeaderNumbers(City city) {
-        switch (city) {
-            case BUE:
-                return new int[]{COMUNA, CALLE_NOMBRE, NOMBRE_CIENTIFICO, DIAMETRO_ALTURA_PECHO};
-            case VAN:
-                return new int[]{NEIGHBOURHOOD_NAME, STD_STREET, COMMON_NAME, DIAMETER};
-            default:
-                throw new IllegalArgumentException("City not found");
+    public static Map<String, Integer> parseNeighbourhood(String directoryPath, City city) throws IOException{
+        Map<String, Integer> neighbourhoods = new HashMap<>();
+        //Elimino el header
+        List<String> file = Files.readAllLines(Paths.get(directoryPath + NEIGHBOURHOODS_FILE_PREFIX + city.getAbbreviation() + FILE_EXTENSION)).
+                stream().skip(1).collect(Collectors.toList());
+
+        for(String line : file ) {
+            String[] parse = line.split(";");
+            neighbourhoods.put(parse[0], Integer.valueOf(parse[1]));
         }
+
+        return neighbourhoods;
     }
 
-
+/*
     public static List<Neighbourhood> parseNeighbourhood(String inPath) throws IOException{
         List<Neighbourhood> neighbourhoods = new ArrayList<>();
         //Elimino el header
@@ -67,6 +108,34 @@ public class Parser {
         }
 
         return neighbourhoods;
+    }
+
+    public static List<Tree> parseTrees(String inPath, City city) throws IOException {
+        int[] headersIndex = getHeaderNumbers(city);
+
+        List<Tree> trees = new ArrayList<>();
+        //Elimino el header
+        List<String> file = Files.readAllLines(Paths.get(inPath), StandardCharsets.ISO_8859_1)
+                .stream().skip(1).collect(Collectors.toList());
+
+        for(String line : file ) {
+            String[] parse = line.split(";");
+            trees.add(new Tree(parse[headersIndex[0]], parse[headersIndex[1]],
+                    parse[headersIndex[2]], Double.valueOf(parse[headersIndex[3]])));
+        }
+
+        return trees;
+    }*/
+
+    private static int[] getHeaderNumbers(City city) {
+        switch (city) {
+            case BUE:
+                return new int[]{COMUNA, CALLE_NOMBRE, NOMBRE_CIENTIFICO, DIAMETRO_ALTURA_PECHO};
+            case VAN:
+                return new int[]{NEIGHBOURHOOD_NAME, STD_STREET, COMMON_NAME, DIAMETER};
+            default:
+                throw new IllegalArgumentException("City not found");
+        }
     }
 
 /*    public static List<Tree> parseVANTrees(String inPath) throws IOException {
