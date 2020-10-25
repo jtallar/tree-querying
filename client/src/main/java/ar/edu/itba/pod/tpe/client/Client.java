@@ -3,6 +3,7 @@ package ar.edu.itba.pod.tpe.client;
 import ar.edu.itba.pod.tpe.client.exceptions.ArgumentException;
 import ar.edu.itba.pod.tpe.client.queries.Query1;
 import ar.edu.itba.pod.tpe.client.queries.Query4;
+import ar.edu.itba.pod.tpe.client.queries.Query5;
 import ar.edu.itba.pod.tpe.client.utils.ClientUtils;
 import ar.edu.itba.pod.tpe.client.utils.Parser;
 import ar.edu.itba.pod.tpe.models.Neighbourhood;
@@ -17,6 +18,7 @@ import com.hazelcast.mapreduce.KeyValueSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.management.Query;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.*;
@@ -153,6 +155,7 @@ public class Client {
                 Query4.runQuery(job, treeName, minNumber, outPath);
                 break;
             case "query5":
+                Query5.runQuery(job, outPath);
                 break;
             default:
                 break;

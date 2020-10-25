@@ -42,7 +42,7 @@ public class Parser {
             String[] parse = line.split(";");
             Neighbourhood neighbourhood = new Neighbourhood(parse[headersIndex[0]]);
             trees.computeIfAbsent(neighbourhood, k -> new ArrayList<>());
-            trees.get(neighbourhood).add(new Tree(parse[headersIndex[1]], parse[headersIndex[2]], Double.valueOf(parse[headersIndex[3]])));
+            trees.get(neighbourhood).add(new Tree(parse[headersIndex[1]], parse[headersIndex[2]], Double.parseDouble(parse[headersIndex[3]])));
         }
 
         return trees;
