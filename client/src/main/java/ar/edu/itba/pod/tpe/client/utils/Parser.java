@@ -1,5 +1,6 @@
-package ar.edu.itba.pod.tpe.client;
+package ar.edu.itba.pod.tpe.client.utils;
 
+import ar.edu.itba.pod.tpe.client.City;
 import ar.edu.itba.pod.tpe.models.Neighbourhood;
 import ar.edu.itba.pod.tpe.models.Tree;
 
@@ -47,11 +48,12 @@ public class Parser {
         return trees;
     }
 
+    // TODO: check si hace falta levantarlo con el mismo charset, por si lee un barrio con un caracter raro, que lo interprete igual
     public static Map<String, Integer> parseNeighbourhood(String directoryPath, City city) throws IOException{
         Map<String, Integer> neighbourhoods = new HashMap<>();
         //Elimino el header
-        List<String> file = Files.readAllLines(Paths.get(directoryPath + NEIGHBOURHOODS_FILE_PREFIX + city.getAbbreviation() + FILE_EXTENSION)).
-                stream().skip(1).collect(Collectors.toList());
+        List<String> file = Files.readAllLines(Paths.get(directoryPath + NEIGHBOURHOODS_FILE_PREFIX + city.getAbbreviation() + FILE_EXTENSION), StandardCharsets.ISO_8859_1)
+                .stream().skip(1).collect(Collectors.toList());
 
         for(String line : file ) {
             String[] parse = line.split(";");
