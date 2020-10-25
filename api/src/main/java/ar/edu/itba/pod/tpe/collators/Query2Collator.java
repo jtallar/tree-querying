@@ -1,4 +1,4 @@
-package ar.edu.itba.pod.tpe;
+package ar.edu.itba.pod.tpe.collators;
 
 import ar.edu.itba.pod.tpe.models.TreeStreet;
 import com.hazelcast.mapreduce.Collator;

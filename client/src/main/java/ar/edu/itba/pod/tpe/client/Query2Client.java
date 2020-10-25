@@ -1,7 +1,9 @@
 package ar.edu.itba.pod.tpe.client;
 
-import ar.edu.itba.pod.tpe.Query2Collator;
+import ar.edu.itba.pod.tpe.collators.Query2Collator;
 import ar.edu.itba.pod.tpe.client.exceptions.ArgumentException;
+import ar.edu.itba.pod.tpe.client.utils.ClientUtils;
+import ar.edu.itba.pod.tpe.client.utils.Parser;
 import ar.edu.itba.pod.tpe.keyPredicates.NeighbourhoodKeyPredicate;
 import ar.edu.itba.pod.tpe.mappers.Query2Mapper;
 import ar.edu.itba.pod.tpe.models.Neighbourhood;
@@ -55,7 +57,7 @@ public class Query2Client {
         Map<String, Integer>  neigh;
         try {
             neigh = Parser.parseNeighbourhood("/Users/nicolas/Downloads/csvs_POD/", City.of("BUE"));
-        } catch (IOException e) {
+        } catch (IOException | ArgumentException e) {
             System.err.println(e.getMessage());
             System.exit(ERROR_STATUS);
             return;
@@ -66,7 +68,7 @@ public class Query2Client {
         hzTree.clear();
         try {
             hzTree.putAll(Parser.parseTrees("/Users/nicolas/Downloads/csvs_POD/", City.of("BUE")));
-        } catch (IOException e) {
+        } catch (IOException | ArgumentException e) {
             System.err.println(e.getMessage());
             System.exit(ERROR_STATUS);
             return;
