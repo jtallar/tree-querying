@@ -34,13 +34,13 @@ public class TestClient {
     public static void main(String[] args) {
         logger.info("tpe2-g6 TestClient Starting ...");
 
-        try {
-            argumentParsing();
-        } catch (ArgumentException e) {
-            System.err.println(e.getMessage());
-            System.exit(ERROR_STATUS);
-            return;
-        }
+//        try {
+//            argumentParsing();
+//        } catch (ArgumentException e) {
+//            System.err.println(e.getMessage());
+//            System.exit(ERROR_STATUS);
+//            return;
+//        }
 //
 //        try {
 //            long a, b;
