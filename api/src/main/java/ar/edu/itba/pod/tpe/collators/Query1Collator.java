@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-public class Query1Collator implements Collator<Map.Entry<String, Long>, SortedSet<ComparablePair<String, String>>> {
+public class Query1Collator implements Collator<Map.Entry<String, Long>, SortedSet<ComparablePair<Double, String>>> {
 
     private final Map<String, Long> neighborhoods;
 
@@ -17,10 +17,10 @@ public class Query1Collator implements Collator<Map.Entry<String, Long>, SortedS
     }
 
     @Override
-    public SortedSet<ComparablePair<String, String>> collate(Iterable<Map.Entry<String, Long>> iterable) {
+    public SortedSet<ComparablePair<Double, String>> collate(Iterable<Map.Entry<String, Long>> iterable) {
 
-        SortedSet<ComparablePair<String, String>> out = new TreeSet<>(ComparablePair::compareTo);
-        iterable.forEach(e -> out.add(new ComparablePair<>(e.getKey(), String.valueOf((float) e.getValue() / neighborhoods.get(e.getKey())))));
+        SortedSet<ComparablePair<Double, String>> out = new TreeSet<>(ComparablePair::compareTo);
+        iterable.forEach(e -> out.add(new ComparablePair<>((double) (e.getValue() / neighborhoods.get(e.getKey())), e.getKey())));
         return out;
     }
 }

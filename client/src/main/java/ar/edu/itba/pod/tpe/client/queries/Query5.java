@@ -2,13 +2,11 @@ package ar.edu.itba.pod.tpe.client.queries;
 
 import ar.edu.itba.pod.tpe.client.utils.ClientUtils;
 import ar.edu.itba.pod.tpe.client.utils.ThrowableBiConsumer;
-import ar.edu.itba.pod.tpe.collators.Query1Collator;
-import ar.edu.itba.pod.tpe.keyPredicates.Query1KeyPredicate;
-import ar.edu.itba.pod.tpe.mappers.Query1Mapper;
+import ar.edu.itba.pod.tpe.collators.Query5Collator;
+import ar.edu.itba.pod.tpe.mappers.Query5Mapper;
 import ar.edu.itba.pod.tpe.models.Neighbourhood;
 import ar.edu.itba.pod.tpe.models.Tree;
-import ar.edu.itba.pod.tpe.reducers.Query1ReducerFactory;
-import ar.edu.itba.pod.tpe.utils.ComparablePair;
+import ar.edu.itba.pod.tpe.reducers.Query5ReducerFactory;
 import ar.edu.itba.pod.tpe.utils.ComparableTrio;
 import com.hazelcast.mapreduce.Job;
 import com.hazelcast.mapreduce.JobCompletableFuture;
@@ -26,23 +24,23 @@ public class Query5 {
     public static void runQuery(Job<Neighbourhood, List<Tree>> job, String outPath)
             throws InterruptedException, ExecutionException {
 
-        final JobCompletableFuture<SortedSet<ComparableTrio<String, String, String>>> future = job
-                .mapper(new Query1Mapper())
-                .reducer(new Query1ReducerFactory()) // same as query 4
-                .submit(new Query1Collator());
+        final JobCompletableFuture<SortedSet<ComparableTrio<Long, String, String>>> future = job
+                .mapper(new Query5Mapper())
+                .reducer(new Query5ReducerFactory()) // same as query 4
+                .submit(new Query5Collator());
 
         // Wait and retrieve result
-        SortedSet<ComparableTrio<String,String, String>> result;
+        SortedSet<ComparableTrio<Long, String, String>> result;
         result = future.get();
 
-        ClientUtils.genericCSVPrinter(outPath + "query1.csv", result, printQuery);
+        ClientUtils.genericCSVPrinter3(outPath + "query1.csv", result, printQuery);
 
     }
 
     /**
-     * Throwable consumer, prints the result as a BarrioA;BarrioB
+     * Throwable consumer, prints the result as a Grupo;BarrioA;BarrioB
      */
-    private static final ThrowableBiConsumer<SortedSet<ComparableTrio<String, String, String>>, CSVPrinter, IOException> printQuery = (results, printer) -> {
+    private static final ThrowableBiConsumer<SortedSet<ComparableTrio<Long, String, String>>, CSVPrinter, IOException> printQuery = (results, printer) -> {
         // Print header and fill csv with results
         printer.printRecord(QUERY_HEADER);
         results.forEach(p -> {

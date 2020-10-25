@@ -28,29 +28,29 @@ public class Query1 {
 
     public static void runQuery(Job<Neighbourhood, List<Tree>> job, Map<String, Long> neighbours, String outPath)
             throws InterruptedException, ExecutionException  {
-        final JobCompletableFuture<SortedSet<ComparablePair<String, String>>> future = job
+        final JobCompletableFuture<SortedSet<ComparablePair<Double, String>>> future = job
                 .keyPredicate(new Query1KeyPredicate(neighbours.keySet()))
                 .mapper(new Query1Mapper())
                 .reducer(new Query1ReducerFactory()) // same as query 4
                 .submit(new Query1Collator(neighbours));
 
         // Wait and retrieve result
-        SortedSet<ComparablePair<String, String>> result;
+        SortedSet<ComparablePair<Double, String>> result;
         result = future.get();
 
-        ClientUtils.genericCSVPrinter(outPath + "query1.csv", result, printQuery);
+        ClientUtils.genericCSVPrinter2(outPath + "query1.csv", result, printQuery);
 
     }
 
     /**
      * Throwable consumer, prints the result as a BarrioA;BarrioB
      */
-    private static final ThrowableBiConsumer<SortedSet<ComparablePair<String, String>>, CSVPrinter, IOException> printQuery = (results, printer) -> {
+    private static final ThrowableBiConsumer<SortedSet<ComparablePair<Double, String>>, CSVPrinter, IOException> printQuery = (results, printer) -> {
         // Print header and fill csv with results
         printer.printRecord(QUERY_HEADER);
         results.forEach(p -> {
             try {
-                printer.printRecord(p.getFirst(), p.getSecond());
+                printer.printRecord(p.getSecond(), String.format("%.2f", p.getFirst()));
             } catch (IOException e) {
                 e.printStackTrace();
             }
