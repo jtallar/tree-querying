@@ -48,15 +48,15 @@ public class Parser {
         return trees;
     }
 
-    public static Map<String, Integer> parseNeighbourhood(String directoryPath, City city) throws IOException{
-        Map<String, Integer> neighbourhoods = new HashMap<>();
+    public static Map<String, Long> parseNeighbourhood(String directoryPath, City city) throws IOException{
+        Map<String, Long> neighbourhoods = new HashMap<>();
         //Elimino el header
         List<String> file = Files.readAllLines(Paths.get(directoryPath + NEIGHBOURHOODS_FILE_PREFIX + city.getAbbreviation() + FILE_EXTENSION)).
                 stream().skip(1).collect(Collectors.toList());
 
         for(String line : file ) {
             String[] parse = line.split(";");
-            neighbourhoods.put(parse[0], Integer.valueOf(parse[1]));
+            neighbourhoods.put(parse[0], Long.valueOf(parse[1]));
         }
 
         return neighbourhoods;

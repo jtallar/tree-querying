@@ -26,13 +26,13 @@ import java.util.concurrent.ExecutionException;
 public class Query1 {
     private static final String QUERY_HEADER = "BARRIO;ARBOLES_POR_HABITANTE";
 
-    public static void runQuery(Job<Neighbourhood, List<Tree>> job, Map<String, Integer> neighbours, String outPath)
+    public static void runQuery(Job<Neighbourhood, List<Tree>> job, Map<String, Long> neighbours, String outPath)
             throws InterruptedException, ExecutionException  {
         final JobCompletableFuture<SortedSet<ComparablePair<String, String>>> future = job
-                .keyPredicate(new Query1KeyPredicate(neighbours))
+                .keyPredicate(new Query1KeyPredicate(neighbours.keySet()))
                 .mapper(new Query1Mapper())
                 .reducer(new Query1ReducerFactory()) // same as query 4
-                .submit(new Query1Collator());
+                .submit(new Query1Collator(neighbours));
 
         // Wait and retrieve result
         SortedSet<ComparablePair<String, String>> result;

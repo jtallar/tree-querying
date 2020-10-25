@@ -10,15 +10,17 @@ import java.util.TreeSet;
 
 public class Query1Collator implements Collator<Map.Entry<Neighbourhood, Long>, SortedSet<ComparablePair<String, String>>> {
 
+    private final Map<String, Long> neighborhoods;
+
+    public Query1Collator(Map<String, Long> neighborhoods) {
+        this.neighborhoods = neighborhoods;
+    }
+
     @Override
     public SortedSet<ComparablePair<String, String>> collate(Iterable<Map.Entry<Neighbourhood, Long>> iterable) {
 
         SortedSet<ComparablePair<String, String>> out = new TreeSet<>(ComparablePair::compareTo);
-        iterable.forEach(e -> {
-            e.setValue(e.getValue()/e.getKey().getPopulation());
-            out.add(new ComparablePair<>(e.getKey().getName(), e.getValue().toString()));
-        });
-
+        iterable.forEach(e -> out.add(new ComparablePair<>(e.getKey().getName(), String.valueOf((float) e.getValue() / neighborhoods.get(e.getKey().getName())))));
         return out;
     }
 }

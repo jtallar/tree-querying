@@ -43,7 +43,7 @@ public class Client {
     private static String inPath, outPath;
     private static int minNumber;
     private static String treeName;
-    private static Map<String, Integer>  neighborhoods;
+    private static Map<String, Long>  neighborhoods;
 
     public static void main(String[] args) {
         try {
@@ -74,7 +74,7 @@ public class Client {
         logger.info("Fin de la lectura del archivo");
 
 
-
+        logger.info("Inicio de la lectura del archivo de ciudades");
         try {
             neighborhoods = Parser.parseNeighbourhood(inPath, city);
         } catch (IOException e) {
@@ -82,6 +82,7 @@ public class Client {
             System.exit(ERROR_STATUS);
             return;
         }
+        logger.info("Fin de la lectura del archivo de ciudades");
 
 
         final KeyValueSource<Neighbourhood, List<Tree>> source = KeyValueSource.fromMap(map);
