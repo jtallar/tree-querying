@@ -1,40 +1,28 @@
 package ar.edu.itba.pod.tpe.client;
 
 import ar.edu.itba.pod.tpe.client.exceptions.ArgumentException;
-import ar.edu.itba.pod.tpe.client.utils.ThrowableBiConsumer;
-import ar.edu.itba.pod.tpe.collators.Query4Collator;
-import ar.edu.itba.pod.tpe.keyPredicates.TestKeyPredicate;
-import ar.edu.itba.pod.tpe.mappers.Query4Mapper;
-import ar.edu.itba.pod.tpe.mappers.TestMapper;
+import ar.edu.itba.pod.tpe.client.queries.Query4;
 import ar.edu.itba.pod.tpe.models.Neighbourhood;
 import ar.edu.itba.pod.tpe.models.Tree;
-import ar.edu.itba.pod.tpe.reducers.Query4ReducerFactory;
-import ar.edu.itba.pod.tpe.reducers.TestReducer;
-import ar.edu.itba.pod.tpe.utils.ComparablePair;
 import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.client.config.ClientConfig;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import com.hazelcast.mapreduce.Job;
-import com.hazelcast.mapreduce.JobCompletableFuture;
 import com.hazelcast.mapreduce.JobTracker;
 import com.hazelcast.mapreduce.KeyValueSource;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVPrinter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.FileWriter;
 import java.io.IOException;
-import java.net.InetSocketAddress;
 import java.net.URISyntaxException;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
-import java.util.function.Consumer;
 
-public class Query4Client {
-    private static Logger logger = LoggerFactory.getLogger(Query4Client.class);
+public class Client {
+    private static Logger logger = LoggerFactory.getLogger(Client.class);
 
+    private static final String QUERY_NAME_PARAM = "queryName";
     private static final String CITY_PARAM = "city";
     private static final String ADDRESS_PARAM = "addresses";
     private static final String IN_PATH_PARAM = "inPath";
@@ -44,12 +32,9 @@ public class Query4Client {
     private static final String NAME_PARAM = "name";
     private static final String N_PARAM = "n";
 
-    private static final String QUERY4_HEADER = "Barrio A;Barrio B";
-    private static final String QUERY4_FILE_NAME = "query4";
-
-
     private static final int ERROR_STATUS = 1;
 
+    private static String query;
     private static City city;
     private static List<String> clusterAddresses = new ArrayList<>();
     private static String inPath, outPath;
@@ -70,9 +55,9 @@ public class Query4Client {
         config.getNetworkConfig().addAddress(clusterAddresses.toArray(new String[0]));
         HazelcastInstance hz = HazelcastClient.newHazelcastClient(config);
 
-        JobTracker jobTracker = hz.getJobTracker("g6-query4");
+        JobTracker jobTracker = hz.getJobTracker("g6-job-" + query);
 
-        final IMap<Neighbourhood, List<Tree>> map = hz.getMap("g6-query4");
+        final IMap<Neighbourhood, List<Tree>> map = hz.getMap("g6-map-" + query);
         map.clear();
         logger.info("Inicio de la lectura del archivo");
         try {
@@ -86,33 +71,26 @@ public class Query4Client {
 
         final KeyValueSource<Neighbourhood, List<Tree>> source = KeyValueSource.fromMap(map);
         final Job<Neighbourhood, List<Tree>> job = jobTracker.newJob(source);
-        logger.info("Inicio del trabajo map/reduce");
-        final JobCompletableFuture<SortedSet<ComparablePair<String, String>>> future = job
-                .mapper(new Query4Mapper(treeName))
-                .reducer(new Query4ReducerFactory())
-                .submit(new Query4Collator(minNumber));
 
-        // Wait and retrieve result
-        SortedSet<ComparablePair<String, String>> result;
+        logger.info("Inicio del trabajo map/reduce");
         try {
-             result = future.get();
+            runQuery(job);
         } catch (InterruptedException | ExecutionException e) {
             System.err.println("Future execution interrupted. Exiting...");
             System.exit(ERROR_STATUS);
             return;
         }
-
-        genericCSVPrinter(outPath + QUERY4_FILE_NAME + ".csv", result, printQuery4);
-
         logger.info("Fin del trabajo map/reduce");
 
         hz.shutdown();
     }
 
+    // TODO: ver como marcar que argumentos son requeridos segun el numero de query
     private static void argumentParsing() throws ArgumentException {
         Properties properties = System.getProperties();
 
-        System.out.println(properties.getProperty(CITY_PARAM));
+        query = Optional.ofNullable(properties.getProperty(QUERY_NAME_PARAM)).orElseThrow(new ArgumentException("Programmer Error! Query name must be supplied in .sh!"));
+
         city = City.of(Optional.ofNullable(properties.getProperty(CITY_PARAM)).orElseThrow(new ArgumentException("City must be supplied using -Dcity")));
 
         String[] clusterNodes = Optional.ofNullable(properties.getProperty(ADDRESS_PARAM)).orElse("").split(",");
@@ -143,38 +121,24 @@ public class Query4Client {
         treeName = Optional.ofNullable(properties.getProperty(NAME_PARAM)).orElseThrow(new ArgumentException("Tree name must be supplied using -Dname"));
     }
 
-    /**
-     * Opens the csv printer, executes the printing function, and closes the printer.
-     * @param file File path for the csv printer.
-     * @param result Result from the service response.
-     * @param printFunction Print function to be applied.
-     */
-    private static void genericCSVPrinter(String file, SortedSet<ComparablePair<String, String>> result, ThrowableBiConsumer<SortedSet<ComparablePair<String, String>>, CSVPrinter, IOException> printFunction) {
-        try (final CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(file), CSVFormat.newFormat(';')
-                .withRecordSeparator('\n'))) {
+    // TODO: VER COMO HACER ESTO DE MANERA MAS PROLIJA
+    private static void runQuery(Job<Neighbourhood, List<Tree>> job)
+            throws InterruptedException, ExecutionException {
 
-            // Applies function to result and writes on the csv
-            printFunction.accept(result, csvPrinter);
-
-            // Closes the csv printer
-            csvPrinter.flush();
-        } catch (IOException e){
-            System.err.println("Error while printing CSV file");
+        switch (query) {
+            case "query1":
+                break;
+            case "query2":
+                break;
+            case "query3":
+                break;
+            case "query4":
+                Query4.runQuery(job, treeName, minNumber, outPath);
+                break;
+            case "query5":
+                break;
+            default:
+                break;
         }
     }
-
-    /**
-     * Throwable consumer, prints the result as a BarrioA;BarrioB
-     */
-    private static final ThrowableBiConsumer<SortedSet<ComparablePair<String, String>>, CSVPrinter, IOException> printQuery4 = (results, printer) -> {
-        // Print header and fill csv with results
-        printer.printRecord(QUERY4_HEADER);
-        results.forEach(p -> {
-            try {
-                printer.printRecord(p.getFirst(), p.getSecond());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
-    };
 }
