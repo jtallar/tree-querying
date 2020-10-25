@@ -1,6 +1,7 @@
 package ar.edu.itba.pod.tpe.client;
 
 import ar.edu.itba.pod.tpe.client.exceptions.ArgumentException;
+import ar.edu.itba.pod.tpe.client.queries.Query1;
 import ar.edu.itba.pod.tpe.client.queries.Query4;
 import ar.edu.itba.pod.tpe.client.utils.ClientUtils;
 import ar.edu.itba.pod.tpe.client.utils.Parser;
@@ -42,6 +43,7 @@ public class Client {
     private static String inPath, outPath;
     private static int minNumber;
     private static String treeName;
+    private static Map<String, Integer>  neighborhoods;
 
     public static void main(String[] args) {
         try {
@@ -70,6 +72,17 @@ public class Client {
             return;
         }
         logger.info("Fin de la lectura del archivo");
+
+
+
+        try {
+            neighborhoods = Parser.parseNeighbourhood(inPath, city);
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
+            System.exit(ERROR_STATUS);
+            return;
+        }
+
 
         final KeyValueSource<Neighbourhood, List<Tree>> source = KeyValueSource.fromMap(map);
         final Job<Neighbourhood, List<Tree>> job = jobTracker.newJob(source);
@@ -129,6 +142,7 @@ public class Client {
 
         switch (query) {
             case "query1":
+                Query1.runQuery(job, neighborhoods, outPath);
                 break;
             case "query2":
                 break;
