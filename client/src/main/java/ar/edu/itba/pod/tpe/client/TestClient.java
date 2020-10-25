@@ -1,6 +1,8 @@
 package ar.edu.itba.pod.tpe.client;
 
 import ar.edu.itba.pod.tpe.client.exceptions.ArgumentException;
+import ar.edu.itba.pod.tpe.client.utils.ClientUtils;
+import ar.edu.itba.pod.tpe.client.utils.Parser;
 import ar.edu.itba.pod.tpe.keyPredicates.TestKeyPredicate;
 import ar.edu.itba.pod.tpe.mappers.TestMapper;
 import ar.edu.itba.pod.tpe.models.Neighbourhood;
@@ -34,13 +36,13 @@ public class TestClient {
     public static void main(String[] args) {
         logger.info("tpe2-g6 TestClient Starting ...");
 
-        try {
-            argumentParsing();
-        } catch (ArgumentException e) {
-            System.err.println(e.getMessage());
-            System.exit(ERROR_STATUS);
-            return;
-        }
+//        try {
+//            argumentParsing();
+//        } catch (ArgumentException e) {
+//            System.err.println(e.getMessage());
+//            System.exit(ERROR_STATUS);
+//            return;
+//        }
 //
 //        try {
 //            long a, b;
@@ -72,7 +74,7 @@ public class TestClient {
         map.clear();
         try {
             map.putAll(Parser.parseTrees("/home/julian/Desktop/POD/tpe2-g6/test-files/", City.of("BUE")));
-        } catch (IOException e) {
+        } catch (IOException | ArgumentException e) {
             System.err.println(e.getMessage());
             System.exit(ERROR_STATUS);
             return;
@@ -81,7 +83,7 @@ public class TestClient {
         Map<String, Integer> neigh;
         try {
              neigh = Parser.parseNeighbourhood("/home/julian/Desktop/POD/tpe2-g6/test-files/", City.of("BUE"));
-        } catch (IOException e) {
+        } catch (IOException | ArgumentException  e) {
             System.err.println(e.getMessage());
             System.exit(ERROR_STATUS);
             return;

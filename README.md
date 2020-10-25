@@ -28,6 +28,22 @@ Luego, se debe levantar al menos una instancia de hazelcast, para lo cual se deb
 Donde xx.xx.xx.xx es la interfaz de red a la que se desea bindear Hazelcast. Pueden utilizarse caracteres 
 de rango (* y -) para simplicidad.
 
+Si se desea levantar más nodos, basta con ejecutar los mismos comandos en otra terminal, indicando la misma interfaz de red.
+
+### Client-Side
+Una vez levantado el servidor (al menos 1 nodo), para ejecutar alguna de las queries, nos movemos al directorio donde 
+se encuentran los ejecutables (nuevamente desde el directorio raíz del proyecto)
+
+`cd client/target/tpe2-g6-client-1.0-SNAPSHOT`
+
+Y ejecutamos la query deseada.
+
+##TODO: ESTO ES UN EJEMPLO, GENERALIZAR
+Para ejecutar la query 4, ejecutamos  
+
+`./query4 -Dcity=BUE -Daddresses=127.0.0.1:5701 -DinPath=/home/julian/Desktop/POD/tpe2-g6/test-files/ 
+-DoutPath=/home/julian/Desktop/POD/tpe2-g6/test-files/ -Dmin=10000 -Dname='Fraxinus pennsylvanica'`
+
 
 ### Prueba de cliente
 Me levanto el hazelcast en una terminal, yendo a la carpeta donde esta ubicado el jar
