@@ -8,8 +8,8 @@ import ar.edu.itba.pod.tpe.keyPredicates.NeighbourhoodKeyPredicate;
 import ar.edu.itba.pod.tpe.mappers.Query2Mapper;
 import ar.edu.itba.pod.tpe.models.Neighbourhood;
 import ar.edu.itba.pod.tpe.models.Tree;
-import ar.edu.itba.pod.tpe.models.TreeStreet;
 import ar.edu.itba.pod.tpe.reducers.Query2Reducer;
+import ar.edu.itba.pod.tpe.utils.ComparablePair;
 import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.client.config.ClientConfig;
 import com.hazelcast.core.HazelcastInstance;
@@ -80,26 +80,27 @@ public class Query2Client {
 
 
         logger.info("Inicio del map/reduce");
-        final JobCompletableFuture<Map<TreeStreet, Long>> future = job
+        final JobCompletableFuture<Map<String,ComparablePair<String,Long>>> future = job
                 .keyPredicate(new NeighbourhoodKeyPredicate(neigh))
                 .mapper(new Query2Mapper())
                 .reducer(new Query2Reducer())
-                .submit(new Query2Collator(1000));
+                .submit(new Query2Collator(2000));
 
         // Wait and retrieve result
-        Map<TreeStreet, Long> result = new HashMap<>();
+        Map<String,ComparablePair<String,Long>> result = new HashMap<>();
 
         try {
             result = future.get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
-
-        System.out.println(result.size());
         logger.info("Fin del map/reduce");
-        for(TreeStreet t : result.keySet()){
-            System.out.println(t.getNeighbourhood() + ' ' + t.getTree() + ' ' + result.get(t));
+
+        for(String s : result.keySet()){
+            result.get(s);
+            System.out.println("BARRIO: " + s + " ARBOL: " + result.get(s).getFirst() + " CANT: " + result.get(s).getSecond());
         }
+
 
         hz.shutdown();
     }

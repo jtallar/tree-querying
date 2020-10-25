@@ -1,6 +1,7 @@
 package ar.edu.itba.pod.tpe.client;
 
 import ar.edu.itba.pod.tpe.client.exceptions.ArgumentException;
+import ar.edu.itba.pod.tpe.client.queries.Query2;
 import ar.edu.itba.pod.tpe.client.queries.Query4;
 import ar.edu.itba.pod.tpe.client.utils.ClientUtils;
 import ar.edu.itba.pod.tpe.client.utils.Parser;
@@ -131,6 +132,7 @@ public class Client {
             case "query1":
                 break;
             case "query2":
+                //Query2.runQuery(job,minNumber,outPath);
                 break;
             case "query3":
                 break;
