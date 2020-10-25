@@ -72,7 +72,7 @@ public class TestClient {
         map.clear();
         try {
             map.putAll(Parser.parseTrees("/home/julian/Desktop/POD/tpe2-g6/test-files/", City.of("BUE")));
-        } catch (IOException e) {
+        } catch (IOException | ArgumentException e) {
             System.err.println(e.getMessage());
             System.exit(ERROR_STATUS);
             return;
@@ -81,7 +81,7 @@ public class TestClient {
         Map<String, Integer> neigh;
         try {
              neigh = Parser.parseNeighbourhood("/home/julian/Desktop/POD/tpe2-g6/test-files/", City.of("BUE"));
-        } catch (IOException e) {
+        } catch (IOException | ArgumentException  e) {
             System.err.println(e.getMessage());
             System.exit(ERROR_STATUS);
             return;
