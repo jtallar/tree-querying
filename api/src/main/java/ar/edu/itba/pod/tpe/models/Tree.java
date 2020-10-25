@@ -26,6 +26,8 @@ public class Tree implements DataSerializable {
         return common_name;
     }
 
+    public double getDiameter() { return diameter; }
+
     @Override
     public String toString() {
         return street_name + "--" + common_name + "--" +  diameter;
