@@ -1,20 +1,16 @@
 package ar.edu.itba.pod.tpe.client;
 
-import ar.edu.itba.pod.tpe.client.ClientUtils;
-import ar.edu.itba.pod.tpe.client.TestClient;
+import ar.edu.itba.pod.tpe.Query2Collator;
 import ar.edu.itba.pod.tpe.client.exceptions.ArgumentException;
-import ar.edu.itba.pod.tpe.mappers.NeighbourhoodKeyPredicate;
-import ar.edu.itba.pod.tpe.mappers.TestMapper;
-import ar.edu.itba.pod.tpe.mappers.TreeStreetMapper;
+import ar.edu.itba.pod.tpe.keyPredicates.NeighbourhoodKeyPredicate;
+import ar.edu.itba.pod.tpe.mappers.Query2Mapper;
 import ar.edu.itba.pod.tpe.models.Neighbourhood;
 import ar.edu.itba.pod.tpe.models.Tree;
 import ar.edu.itba.pod.tpe.models.TreeStreet;
-import ar.edu.itba.pod.tpe.reducers.TestReducer;
-import ar.edu.itba.pod.tpe.reducers.TreeStreetReducer;
+import ar.edu.itba.pod.tpe.reducers.Query2Reducer;
 import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.client.config.ClientConfig;
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IList;
 import com.hazelcast.core.IMap;
 import com.hazelcast.mapreduce.Job;
 import com.hazelcast.mapreduce.JobCompletableFuture;
@@ -84,9 +80,9 @@ public class Query2Client {
         logger.info("Inicio del map/reduce");
         final JobCompletableFuture<Map<TreeStreet, Long>> future = job
                 .keyPredicate(new NeighbourhoodKeyPredicate(neigh))
-                .mapper(new TreeStreetMapper())
-                .reducer(new TreeStreetReducer())
-                .submit();
+                .mapper(new Query2Mapper())
+                .reducer(new Query2Reducer())
+                .submit(new Query2Collator(1000));
 
         // Wait and retrieve result
         Map<TreeStreet, Long> result = new HashMap<>();

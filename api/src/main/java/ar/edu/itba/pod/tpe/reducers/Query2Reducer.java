@@ -4,7 +4,7 @@ import ar.edu.itba.pod.tpe.models.TreeStreet;
 import com.hazelcast.mapreduce.Reducer;
 import com.hazelcast.mapreduce.ReducerFactory;
 
-public class TreeStreetReducer implements ReducerFactory<TreeStreet, Long, Long> {
+public class Query2Reducer implements ReducerFactory<TreeStreet, Long, Long> {
 
     @Override
     public Reducer<Long, Long> newReducer(TreeStreet treeStreet) {
