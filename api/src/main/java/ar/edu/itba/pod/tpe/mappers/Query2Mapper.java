@@ -8,7 +8,7 @@ import com.hazelcast.mapreduce.Mapper;
 
 import java.util.List;
 
-public class TreeStreetMapper implements Mapper<Neighbourhood, List<Tree>, TreeStreet,Long> {
+public class Query2Mapper implements Mapper<Neighbourhood, List<Tree>, TreeStreet,Long> {
     private static final Long ONE = 1L;
 
     @Override

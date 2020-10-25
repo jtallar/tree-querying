@@ -1,4 +1,4 @@
-package ar.edu.itba.pod.tpe.mappers;
+package ar.edu.itba.pod.tpe.keyPredicates;
 
 import ar.edu.itba.pod.tpe.models.Neighbourhood;
 import com.hazelcast.mapreduce.KeyPredicate;
