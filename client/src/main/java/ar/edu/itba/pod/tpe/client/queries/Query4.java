@@ -1,6 +1,6 @@
 package ar.edu.itba.pod.tpe.client.queries;
 
-import ar.edu.itba.pod.tpe.client.ClientUtils;
+import ar.edu.itba.pod.tpe.client.utils.ClientUtils;
 import ar.edu.itba.pod.tpe.client.utils.ThrowableBiConsumer;
 import ar.edu.itba.pod.tpe.collators.Query4Collator;
 import ar.edu.itba.pod.tpe.mappers.Query4Mapper;

@@ -1,6 +1,8 @@
 package ar.edu.itba.pod.tpe.client;
 
 import ar.edu.itba.pod.tpe.client.exceptions.ArgumentException;
+import ar.edu.itba.pod.tpe.client.utils.ClientUtils;
+import ar.edu.itba.pod.tpe.client.utils.Parser;
 import ar.edu.itba.pod.tpe.keyPredicates.TestKeyPredicate;
 import ar.edu.itba.pod.tpe.mappers.TestMapper;
 import ar.edu.itba.pod.tpe.models.Neighbourhood;
