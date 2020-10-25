@@ -8,10 +8,10 @@ import com.hazelcast.mapreduce.ReducerFactory;
  * Recieves String, Long
  * Returns  String, sum(values)
  */
-public class Query1ReducerFactory implements ReducerFactory<Neighbourhood, Long, Long> {
+public class Query1ReducerFactory implements ReducerFactory<String, Long, Long> {
 
     @Override
-    public Reducer<Long, Long> newReducer(Neighbourhood neighbourhoodName) {
+    public Reducer<Long, Long> newReducer(String neighbourhoodName) {
         return new Query1ReducerFactory.Query1Reducer();
     }
 
