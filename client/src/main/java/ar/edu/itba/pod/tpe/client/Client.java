@@ -115,9 +115,9 @@ public class Client {
 
         try {
             minNumber = Integer.parseInt(properties.getProperty(MIN_PARAM));
-            if (minNumber < 0) throw new NumberFormatException();
+            if (minNumber <= 0) throw new NumberFormatException(); // minNumber debe ser un entero positivo
         } catch (NumberFormatException e) {
-            throw new ArgumentException("min number must be supplied using -Dmin and it must be a positive or zero number");
+            throw new ArgumentException("min number must be supplied using -Dmin and it must be a positive number (min > 0)");
         }
 
         treeName = Optional.ofNullable(properties.getProperty(NAME_PARAM)).orElseThrow(new ArgumentException("Tree name must be supplied using -Dname"));
