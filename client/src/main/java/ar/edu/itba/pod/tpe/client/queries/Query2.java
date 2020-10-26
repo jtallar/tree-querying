@@ -22,7 +22,7 @@ import java.util.concurrent.ExecutionException;
 public class Query2 {
     private static final String QUERY_HEADER = "BARRIO;CALLE_CON_MAS_ARBOLES;ARBOLES";
 
-    public static void runQuery(Job<Neighbourhood, List<Tree>> job, Map<String, Integer>  neigh, int minNumber, String outPath)
+    public static void runQuery(Job<Neighbourhood, List<Tree>> job, Map<String, Long>  neigh, int minNumber, String outPath)
             throws InterruptedException, ExecutionException {
 
         final JobCompletableFuture<Map<String,ComparablePair<String,Long>>> future = job

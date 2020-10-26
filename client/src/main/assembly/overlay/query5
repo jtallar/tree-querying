@@ -1,0 +1,4 @@
+#!/bin/bash
+
+java "$@" -DqueryName="query5" -cp 'lib/jars/*' "ar.edu.itba.pod.tpe.client.Client"
+

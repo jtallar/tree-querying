@@ -3,6 +3,7 @@ package ar.edu.itba.pod.tpe.client.utils;
 import ar.edu.itba.pod.tpe.client.City;
 import ar.edu.itba.pod.tpe.models.Neighbourhood;
 import ar.edu.itba.pod.tpe.models.Tree;
+import sun.rmi.runtime.Log;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -42,22 +43,21 @@ public class Parser {
             String[] parse = line.split(";");
             Neighbourhood neighbourhood = new Neighbourhood(parse[headersIndex[0]]);
             trees.computeIfAbsent(neighbourhood, k -> new ArrayList<>());
-            trees.get(neighbourhood).add(new Tree(parse[headersIndex[1]], parse[headersIndex[2]], Double.valueOf(parse[headersIndex[3]])));
+            trees.get(neighbourhood).add(new Tree(parse[headersIndex[1]], parse[headersIndex[2]], Double.parseDouble(parse[headersIndex[3]])));
         }
 
         return trees;
     }
 
-    // TODO: check si hace falta levantarlo con el mismo charset, por si lee un barrio con un caracter raro, que lo interprete igual
-    public static Map<String, Integer> parseNeighbourhood(String directoryPath, City city) throws IOException{
-        Map<String, Integer> neighbourhoods = new HashMap<>();
+    public static Map<String, Long> parseNeighbourhood(String directoryPath, City city) throws IOException{
+        Map<String, Long> neighbourhoods = new HashMap<>();
         //Elimino el header
         List<String> file = Files.readAllLines(Paths.get(directoryPath + NEIGHBOURHOODS_FILE_PREFIX + city.getAbbreviation() + FILE_EXTENSION), StandardCharsets.ISO_8859_1)
                 .stream().skip(1).collect(Collectors.toList());
 
         for(String line : file ) {
             String[] parse = line.split(";");
-            neighbourhoods.put(parse[0], Integer.valueOf(parse[1]));
+            neighbourhoods.put(parse[0], Long.valueOf(parse[1]));
         }
 
         return neighbourhoods;

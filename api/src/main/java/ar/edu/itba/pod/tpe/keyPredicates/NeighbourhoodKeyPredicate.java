@@ -9,12 +9,12 @@ import java.util.Map;
 
 public class NeighbourhoodKeyPredicate implements KeyPredicate<Neighbourhood> {
 
-    private Map<String, Integer> neighbourhoodMap;
+    private Map<String, Long> neighbourhoodMap;
 
     public NeighbourhoodKeyPredicate() {
     }
 
-    public NeighbourhoodKeyPredicate(Map<String, Integer> neighbourhoodMap) {
+    public NeighbourhoodKeyPredicate(Map<String, Long> neighbourhoodMap) {
         this.neighbourhoodMap = neighbourhoodMap;
     }
 
