@@ -49,7 +49,7 @@ public class Query1 {
         printer.printRecord(QUERY_HEADER);
         results.forEach(p -> {
             try {
-                DecimalFormat df = new DecimalFormat("#.00");
+                DecimalFormat df = new DecimalFormat("#0.00");
                 printer.printRecord(p.getSecond(), df.format(p.getFirst()));
             } catch (IOException e) {
                 e.printStackTrace();
