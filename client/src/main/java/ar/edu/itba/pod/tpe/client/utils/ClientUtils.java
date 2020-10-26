@@ -41,4 +41,24 @@ public class ClientUtils {
             System.err.println("Error while printing CSV file");
         }
     }
+
+    /**
+     * Opens the csv printer, executes the printing function, and closes the printer.
+     * @param file File path for the csv printer.
+     * @param result Result from the service response.
+     * @param printFunction Print function to be applied.
+     */
+    public static void genericCSVPrinter3(String file, SortedSet<ComparablePair<String, Double>> result, ThrowableBiConsumer<SortedSet<ComparablePair<String, Double>>, CSVPrinter, IOException> printFunction) {
+        try (final CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(file), CSVFormat.newFormat(';')
+                .withRecordSeparator('\n'))) {
+
+            // Applies function to result and writes on the csv
+            printFunction.accept(result, csvPrinter);
+
+            // Closes the csv printer
+            csvPrinter.flush();
+        } catch (IOException e){
+            System.err.println("Error while printing CSV file");
+        }
+    }
 }

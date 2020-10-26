@@ -13,7 +13,10 @@ import com.hazelcast.mapreduce.JobCompletableFuture;
 import org.apache.commons.csv.CSVPrinter;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.List;
+import java.util.Locale;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.ExecutionException;
@@ -30,30 +33,29 @@ public class Query3 {
                 .submit(new Query3Collator(limit));
 
         // Wait and retrieve result
-        SortedSet<ComparablePair<String, Double>> original;
-
-        original = future.get();
+        SortedSet<ComparablePair<String, Double>> result = future.get();
 
         System.out.println("Query 3");
-        for(ComparablePair<String, Double> s : original){
+        for(ComparablePair<String, Double> s : result){
             System.out.println("\nArbol: "+ s.getFirst() + "  Diametro: " + s.getSecond());
         }
 //        SortedSet<ComparablePair<String, String>> result = new TreeSet<>();
 //        for(ComparablePair<String, Double> value : original){
 //            result.add(new ComparablePair<>(value.getFirst(), value.getSecond().toString()));
 //        }
-//        ClientUtils.genericCSVPrinter(outPath + "query3.csv", result, printQuery);
+        ClientUtils.genericCSVPrinter3(outPath + "query3.csv", result, printQuery);
     }
 
     /**
      * Throwable consumer, prints the result as a NOMBRE_CIENTIFICO;PROMEDIO_DIAMETRO
      */
-    private static final ThrowableBiConsumer<SortedSet<ComparablePair<String, String>>, CSVPrinter, IOException> printQuery = (results, printer) -> {
+    private static final ThrowableBiConsumer<SortedSet<ComparablePair<String, Double>>, CSVPrinter, IOException> printQuery = (results, printer) -> {
         // Print header and fill csv with results
         printer.printRecord(QUERY_HEADER);
         results.forEach(p -> {
             try {
-                printer.printRecord(p.getFirst(), p.getSecond());
+                DecimalFormat df = new DecimalFormat("#0.00", new DecimalFormatSymbols(Locale.ENGLISH));
+                printer.printRecord(p.getFirst(), df.format(p.getSecond()));
             } catch (IOException e) {
                 e.printStackTrace();
             }
