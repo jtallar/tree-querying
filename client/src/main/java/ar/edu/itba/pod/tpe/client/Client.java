@@ -3,6 +3,7 @@ package ar.edu.itba.pod.tpe.client;
 import ar.edu.itba.pod.tpe.client.exceptions.ArgumentException;
 import ar.edu.itba.pod.tpe.client.queries.Query2;
 import ar.edu.itba.pod.tpe.client.queries.Query1;
+import ar.edu.itba.pod.tpe.client.queries.Query3;
 import ar.edu.itba.pod.tpe.client.queries.Query4;
 import ar.edu.itba.pod.tpe.client.queries.Query5;
 import ar.edu.itba.pod.tpe.client.queries.Query5B;
@@ -49,7 +50,7 @@ public class Client {
     private static City city;
     private static List<String> clusterAddresses = new ArrayList<>();
     private static String inPath, outPath;
-    private static int minNumber;
+    private static int minNumber, limit;
     private static String treeName;
     private static Map<String, Long>  neighborhoods;
 
@@ -131,11 +132,24 @@ public class Client {
         inPath = Optional.ofNullable(properties.getProperty(IN_PATH_PARAM)).orElseThrow(new ArgumentException("In path must be supplied using -DinPath"));
         outPath = Optional.ofNullable(properties.getProperty(OUT_PATH_PARAM)).orElseThrow(new ArgumentException("Out path must be supplied using -DoutPath"));
 
+//        try {
+//            minNumber = Integer.parseInt(properties.getProperty(MIN_PARAM));
+//            if (minNumber < 0) throw new NumberFormatException();
+//        } catch (NumberFormatException e) {
+//            throw new ArgumentException("min number must be supplied using -Dmin and it must be a positive or zero number");
+//        }
         try {
             minNumber = Integer.parseInt(properties.getProperty(MIN_PARAM));
             if (minNumber <= 0) throw new NumberFormatException(); // minNumber debe ser un entero positivo
         } catch (NumberFormatException e) {
             throw new ArgumentException("min number must be supplied using -Dmin and it must be a positive number (min > 0)");
+        }
+
+        try {
+            limit = Integer.parseInt(properties.getProperty(N_PARAM));
+            if (minNumber < 0) throw new NumberFormatException();
+        } catch (NumberFormatException e) {
+            throw new ArgumentException("n number must be supplied using -Dn and it must be a positive number");
         }
 
         treeName = Optional.ofNullable(properties.getProperty(NAME_PARAM)).orElseThrow(new ArgumentException("Tree name must be supplied using -Dname"));
@@ -153,6 +167,7 @@ public class Client {
                 Query2.runQuery(job,neighborhoods,minNumber,outPath);
                 break;
             case "query3":
+                Query3.runQuery(job, limit, outPath);
                 break;
             case "query4":
                 Query4.runQuery(job, treeName, minNumber, outPath);
