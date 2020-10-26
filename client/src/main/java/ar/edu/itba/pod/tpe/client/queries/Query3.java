@@ -34,7 +34,7 @@ public class Query3 {
 
         original = future.get();
 
-        System.out.println("Query 3\n");
+        System.out.println("Query 3");
         for(ComparablePair<String, Double> s : original){
             System.out.println("\nArbol: "+ s.getFirst() + "  Diametro: " + s.getSecond());
         }
