@@ -57,7 +57,6 @@ public class Client {
             return;
         }
 
-        logger.info("Inicio de la lectura del archivo de ciudades");
         try {
             neighborhoods = Parser.parseNeighbourhood(inPath, city);
         } catch (IOException e) {
@@ -65,7 +64,6 @@ public class Client {
             System.exit(ERROR_STATUS);
             return;
         }
-        logger.info("Fin de la lectura del archivo de ciudades");
 
         ClientConfig config = new ClientConfig();
         config.getGroupConfig().setName("g6-cluster").setPassword("123456");
