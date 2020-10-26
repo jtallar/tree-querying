@@ -34,6 +34,10 @@ public class Client {
     private static final String NAME_PARAM = "name";
     private static final String N_PARAM = "n";
 
+    private static final int MIN_PARAM_INDEX = 0;
+    private static final int NAME_PARAM_INDEX = 1;
+    private static final int N_PARAM_INDEX = 2;
+
     private static final int ERROR_STATUS = 1;
 
     private static String query;
@@ -141,6 +145,20 @@ public class Client {
                 break;
             default:
                 break;
+        }
+    }
+
+    private static boolean[] getAdditionalParams() {
+        // min, name, n
+        switch (query) {
+            case "query2":
+                return new boolean[]{true, false, false};
+            case "query3":
+                return new boolean[]{false, false, true};
+            case "query4":
+                return new boolean[]{true, true, false};
+            default:
+                return new boolean[]{false, false, false};
         }
     }
 }
