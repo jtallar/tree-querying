@@ -51,8 +51,8 @@ public class Parser {
     public static Map<String, Long> parseNeighbourhood(String directoryPath, City city) throws IOException{
         Map<String, Long> neighbourhoods = new HashMap<>();
         //Elimino el header
-        List<String> file = Files.readAllLines(Paths.get(directoryPath + NEIGHBOURHOODS_FILE_PREFIX + city.getAbbreviation() + FILE_EXTENSION)).
-                stream().skip(1).collect(Collectors.toList());
+        List<String> file = Files.readAllLines(Paths.get(directoryPath + NEIGHBOURHOODS_FILE_PREFIX + city.getAbbreviation() + FILE_EXTENSION), StandardCharsets.ISO_8859_1)
+                .stream().skip(1).collect(Collectors.toList());
 
         for(String line : file ) {
             String[] parse = line.split(";");
