@@ -14,7 +14,6 @@ import com.hazelcast.mapreduce.JobCompletableFuture;
 import org.apache.commons.csv.CSVPrinter;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -32,15 +31,23 @@ public class Query2 {
                 .submit(new Query2Collator(minNumber));
 
         // Wait and retrieve result
-        Map<String,ComparablePair<String,Long>> result = new HashMap<>();
-
-        try {
-            result = future.get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
+        Map<String,ComparablePair<String,Long>> result;
+        result = future.get();
 
         ClientUtils.mapSVPrinter(outPath + "query2.csv", result, printQuery);
+    }
+
+    // TODO: Integrar ambas, que solo se usa esta que devuelve y que tenga otra llamada para printear
+    public static Map<String,ComparablePair<String,Long>> runQueryTest(Job<Neighbourhood, List<Tree>> job, Map<String, Long>  neigh, int minNumber)
+            throws InterruptedException, ExecutionException {
+        final JobCompletableFuture<Map<String,ComparablePair<String,Long>>> future = job
+                .keyPredicate(new NeighbourhoodKeyPredicate(neigh))
+                .mapper(new Query2Mapper())
+                .reducer(new Query2Reducer())
+                .submit(new Query2Collator(minNumber));
+
+        // Wait and retrieve result
+        return future.get();
     }
 
     private static final ThrowableBiConsumer<Map<String,ComparablePair<String,Long>> , CSVPrinter, IOException> printQuery = (results, printer) -> {
