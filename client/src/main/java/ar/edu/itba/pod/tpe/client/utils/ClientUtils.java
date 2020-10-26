@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.NavigableSet;
+import java.util.Set;
 import java.util.SortedSet;
 
 public class ClientUtils {
@@ -52,7 +54,7 @@ public class ClientUtils {
      * @param result Result from the service response.
      * @param printFunction Print function to be applied.
      */
-    public static void genericCSVPrinter2(String file, SortedSet<ComparablePair<Double, String>> result, ThrowableBiConsumer<SortedSet<ComparablePair<Double, String>>, CSVPrinter, IOException> printFunction) {
+    public static void genericCSVPrinter2(String file, Set<ComparablePair<Double, String>> result, ThrowableBiConsumer<Set<ComparablePair<Double, String>>, CSVPrinter, IOException> printFunction) {
         try (final CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(file), CSVFormat.newFormat(';')
                 .withRecordSeparator('\n'))) {
 

@@ -17,9 +17,8 @@ import com.hazelcast.mapreduce.JobCompletableFuture;
 import org.apache.commons.csv.CSVPrinter;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.SortedSet;
+import java.text.DecimalFormat;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 
@@ -28,14 +27,14 @@ public class Query1 {
 
     public static void runQuery(Job<Neighbourhood, List<Tree>> job, Map<String, Long> neighbours, String outPath)
             throws InterruptedException, ExecutionException  {
-        final JobCompletableFuture<SortedSet<ComparablePair<Double, String>>> future = job
-                .keyPredicate(new Query1KeyPredicate(neighbours.keySet()))
+        final JobCompletableFuture<Set<ComparablePair<Double, String>>> future = job
+                .keyPredicate(new Query1KeyPredicate(neighbours))
                 .mapper(new Query1Mapper())
                 .reducer(new Query1ReducerFactory()) // same as query 4
                 .submit(new Query1Collator(neighbours));
 
         // Wait and retrieve result
-        SortedSet<ComparablePair<Double, String>> result;
+        Set<ComparablePair<Double, String>> result;
         result = future.get();
 
         ClientUtils.genericCSVPrinter2(outPath + "query1.csv", result, printQuery);
@@ -45,12 +44,13 @@ public class Query1 {
     /**
      * Throwable consumer, prints the result as a BarrioA;BarrioB
      */
-    private static final ThrowableBiConsumer<SortedSet<ComparablePair<Double, String>>, CSVPrinter, IOException> printQuery = (results, printer) -> {
+    private static final ThrowableBiConsumer<Set<ComparablePair<Double, String>>, CSVPrinter, IOException> printQuery = (results, printer) -> {
         // Print header and fill csv with results
         printer.printRecord(QUERY_HEADER);
         results.forEach(p -> {
             try {
-                printer.printRecord(p.getSecond(), String.format("%.2f", p.getFirst()));
+                DecimalFormat df = new DecimalFormat("#.00");
+                printer.printRecord(p.getSecond(), df.format(p.getFirst()));
             } catch (IOException e) {
                 e.printStackTrace();
             }
