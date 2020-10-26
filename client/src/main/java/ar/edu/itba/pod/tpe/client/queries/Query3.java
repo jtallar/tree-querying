@@ -34,16 +34,11 @@ public class Query3 {
 
         // Wait and retrieve result
         SortedSet<ComparablePair<String, Double>> result = future.get();
+//        System.out.println("Query 3");
+//        for(ComparablePair<String, Double> s : result)
+//            System.out.println("\nArbol: "+ s.getFirst() + "  Diametro: " + s.getSecond());
 
-        System.out.println("Query 3");
-        for(ComparablePair<String, Double> s : result){
-            System.out.println("\nArbol: "+ s.getFirst() + "  Diametro: " + s.getSecond());
-        }
-//        SortedSet<ComparablePair<String, String>> result = new TreeSet<>();
-//        for(ComparablePair<String, Double> value : original){
-//            result.add(new ComparablePair<>(value.getFirst(), value.getSecond().toString()));
-//        }
-        ClientUtils.genericCSVPrinter3(outPath + "query3.csv", result, printQuery);
+        ClientUtils.genericCSVPrinter4(outPath + "query3.csv", result, printQuery);
     }
 
     /**

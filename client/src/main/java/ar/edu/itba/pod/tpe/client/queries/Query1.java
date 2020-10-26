@@ -18,6 +18,7 @@ import org.apache.commons.csv.CSVPrinter;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 
@@ -49,7 +50,7 @@ public class Query1 {
         printer.printRecord(QUERY_HEADER);
         results.forEach(p -> {
             try {
-                DecimalFormat df = new DecimalFormat("#0.00");
+                DecimalFormat df = new DecimalFormat("#0.00", new DecimalFormatSymbols(Locale.ENGLISH));
                 printer.printRecord(p.getSecond(), df.format(p.getFirst()));
             } catch (IOException e) {
                 e.printStackTrace();
