@@ -1,4 +1,4 @@
 #!/bin/bash
 
-java "$@" -DqueryName="query4" -cp 'lib/jars/*' "ar.edu.itba.pod.tpe.client.Client"
+java "$@" -DqueryName="query1" -cp 'lib/jars/*' "ar.edu.itba.pod.tpe.client.Client"
 
