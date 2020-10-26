@@ -33,6 +33,8 @@ public class Neighbourhood implements DataSerializable {
         this.population = population;
     }
 
+    public int getPopulation() { return this.population; }
+
     @Override
     public String toString() {
         return   name + "--" + population;

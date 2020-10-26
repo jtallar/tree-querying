@@ -1,8 +1,8 @@
 package ar.edu.itba.pod.tpe.utils;
 
 public class ComparablePair<F extends Comparable<F>, S extends Comparable<S>> implements Comparable<ComparablePair<F, S>> {
-    private final F first;
-    private final S second;
+    private F first;
+    private S second;
 
     /**
      * Constructor for a ComparablePair.
@@ -21,6 +21,14 @@ public class ComparablePair<F extends Comparable<F>, S extends Comparable<S>> im
 
     public S getSecond() {
         return second;
+    }
+
+    public void setFirst(F first) {
+        this.first = first;
+    }
+
+    public void setSecond(S second) {
+        this.second = second;
     }
 
     /**
@@ -52,6 +60,11 @@ public class ComparablePair<F extends Comparable<F>, S extends Comparable<S>> im
     @Override
     public int compareTo(ComparablePair<F, S> o) {
         int c = first.compareTo(o.first);
+        return (c != 0) ? c : second.compareTo(o.second);
+    }
+
+    public int compareToModified(ComparablePair<F, S> o) {
+        int c = first.compareTo(o.first) * (-1);
         return (c != 0) ? c : second.compareTo(o.second);
     }
 

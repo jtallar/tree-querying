@@ -1,8 +1,12 @@
 package ar.edu.itba.pod.tpe.client;
 
 import ar.edu.itba.pod.tpe.client.exceptions.ArgumentException;
+import ar.edu.itba.pod.tpe.client.queries.Query2;
+import ar.edu.itba.pod.tpe.client.queries.Query1;
 import ar.edu.itba.pod.tpe.client.queries.Query3;
 import ar.edu.itba.pod.tpe.client.queries.Query4;
+import ar.edu.itba.pod.tpe.client.queries.Query5;
+import ar.edu.itba.pod.tpe.client.queries.Query5B;
 import ar.edu.itba.pod.tpe.client.utils.ClientUtils;
 import ar.edu.itba.pod.tpe.client.utils.Parser;
 import ar.edu.itba.pod.tpe.models.Neighbourhood;
@@ -17,6 +21,7 @@ import com.hazelcast.mapreduce.KeyValueSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.management.Query;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.*;
@@ -35,6 +40,10 @@ public class Client {
     private static final String NAME_PARAM = "name";
     private static final String N_PARAM = "n";
 
+    private static final int MIN_PARAM_INDEX = 0;
+    private static final int NAME_PARAM_INDEX = 1;
+    private static final int N_PARAM_INDEX = 2;
+
     private static final int ERROR_STATUS = 1;
 
     private static String query;
@@ -43,11 +52,20 @@ public class Client {
     private static String inPath, outPath;
     private static int minNumber, limit;
     private static String treeName;
+    private static Map<String, Long>  neighborhoods;
 
     public static void main(String[] args) {
         try {
             argumentParsing();
         } catch (ArgumentException e) {
+            System.err.println(e.getMessage());
+            System.exit(ERROR_STATUS);
+            return;
+        }
+
+        try {
+            neighborhoods = Parser.parseNeighbourhood(inPath, city);
+        } catch (IOException e) {
             System.err.println(e.getMessage());
             System.exit(ERROR_STATUS);
             return;
@@ -77,7 +95,7 @@ public class Client {
 
         logger.info("Inicio del trabajo map/reduce");
         try {
-            runQuery(job);
+            runQuery(job, jobTracker, hz);
         } catch (InterruptedException | ExecutionException e) {
             System.err.println("Future execution interrupted. Exiting...");
             System.exit(ERROR_STATUS);
@@ -120,6 +138,12 @@ public class Client {
 //        } catch (NumberFormatException e) {
 //            throw new ArgumentException("min number must be supplied using -Dmin and it must be a positive or zero number");
 //        }
+        try {
+            minNumber = Integer.parseInt(properties.getProperty(MIN_PARAM));
+            if (minNumber <= 0) throw new NumberFormatException(); // minNumber debe ser un entero positivo
+        } catch (NumberFormatException e) {
+            throw new ArgumentException("min number must be supplied using -Dmin and it must be a positive number (min > 0)");
+        }
 
         try {
             limit = Integer.parseInt(properties.getProperty(N_PARAM));
@@ -132,13 +156,15 @@ public class Client {
     }
 
     // TODO: VER COMO HACER ESTO DE MANERA MAS PROLIJA
-    private static void runQuery(Job<Neighbourhood, List<Tree>> job)
+    private static void runQuery(Job<Neighbourhood, List<Tree>> job, JobTracker jobTracker, HazelcastInstance hz)
             throws InterruptedException, ExecutionException {
 
         switch (query) {
             case "query1":
+                Query1.runQuery(job, neighborhoods, outPath);
                 break;
             case "query2":
+                Query2.runQuery(job,neighborhoods,minNumber,outPath);
                 break;
             case "query3":
                 Query3.runQuery(job, limit, outPath);
@@ -147,9 +173,31 @@ public class Client {
                 Query4.runQuery(job, treeName, minNumber, outPath);
                 break;
             case "query5":
+                final Map<String, Long> result = Query5.runQuery(job);
+                final IMap<String, Long> map = hz.getMap("g6-map-" + query + "-aux");
+                map.clear();
+                map.putAll(result);
+
+                final KeyValueSource<String, Long> source = KeyValueSource.fromMap(map);
+                final Job<String, Long> secondJob = jobTracker.newJob(source);
+                Query5B.runQuery(secondJob, outPath);
                 break;
             default:
                 break;
+        }
+    }
+
+    private static boolean[] getAdditionalParams() {
+        // min, name, n
+        switch (query) {
+            case "query2":
+                return new boolean[]{true, false, false};
+            case "query3":
+                return new boolean[]{false, false, true};
+            case "query4":
+                return new boolean[]{true, true, false};
+            default:
+                return new boolean[]{false, false, false};
         }
     }
 }
