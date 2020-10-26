@@ -16,13 +16,15 @@ public class Query5BCollator implements Collator<Map.Entry<Long, NavigableSet<St
     public SortedSet<ComparableTrio<Long, String, String>> collate(Iterable<Map.Entry<Long, NavigableSet<String>>> iterable) {
 
         SortedSet<ComparableTrio<Long, String, String>> out = new TreeSet<>(ComparableTrio::compareTo);
-        iterable.forEach(e -> {
-            if (e.getKey() == 0) return;
-            while (!e.getValue().isEmpty()) {
-                String first = e.getValue().pollFirst();
-                e.getValue().forEach(s -> out.add(new ComparableTrio<>(e.getKey(), first, s)));
-            }
-        });
+        iterable.forEach(e -> System.out.println("Key=" + e.getKey() + ", Value=" + e.getValue() + "\n"));
+//        iterable.forEach(e -> {
+//            if (e.getKey() == 0) return;
+//
+//            while (!e.getValue().isEmpty()) {
+//                String first = e.getValue().pollFirst();
+//                e.getValue().iterator().forEachRemaining(s -> out.add(new ComparableTrio<>(e.getKey(), first, s)));
+//            }
+//        });
         return out;
     }
 

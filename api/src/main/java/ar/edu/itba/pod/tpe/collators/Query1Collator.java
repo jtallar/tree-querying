@@ -20,7 +20,7 @@ public class Query1Collator implements Collator<Map.Entry<String, Long>, Set<Com
     public Set<ComparablePair<Double, String>> collate(Iterable<Map.Entry<String, Long>> iterable) {
 
         Set<ComparablePair<Double, String>> out = new TreeSet<>(ComparablePair::compareToModified);
-        iterable.forEach(e -> out.add(new ComparablePair<>(round((double) e.getValue() / neighborhoods.get(e.getKey())), e.getKey())));
+        iterable.forEach(e -> out.add(new ComparablePair<>((double) e.getValue() / neighborhoods.get(e.getKey()), e.getKey())));
         return out;
     }
 

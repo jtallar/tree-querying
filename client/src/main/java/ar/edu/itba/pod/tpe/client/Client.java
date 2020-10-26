@@ -153,6 +153,7 @@ public class Client {
                 break;
             case "query5":
                 final Map<String, Long> result = Query5.runQuery(job);
+                System.out.println(result.toString());
                 final IMap<String, Long> map = hz.getMap("g6-map-" + query + "-aux");
                 map.clear();
                 map.putAll(result);
