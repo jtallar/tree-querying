@@ -92,7 +92,7 @@ public class Client {
 
         logger.info("Inicio del trabajo map/reduce");
         try {
-            runQuery(job);
+            runQuery(job, jobTracker);
         } catch (InterruptedException | ExecutionException e) {
             System.err.println("Future execution interrupted. Exiting...");
             System.exit(ERROR_STATUS);
@@ -140,7 +140,7 @@ public class Client {
     }
 
     // TODO: VER COMO HACER ESTO DE MANERA MAS PROLIJA
-    private static void runQuery(Job<Neighbourhood, List<Tree>> job)
+    private static void runQuery(Job<Neighbourhood, List<Tree>> job, JobTracker jobTracker)
             throws InterruptedException, ExecutionException {
 
         switch (query) {
@@ -155,7 +155,7 @@ public class Client {
                 Query4.runQuery(job, treeName, minNumber, outPath);
                 break;
             case "query5":
-                Query5.runQuery(job, outPath);
+                Query5.runQuery(job, jobTracker, outPath);
                 break;
             default:
                 break;
