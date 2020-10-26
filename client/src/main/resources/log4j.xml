@@ -17,6 +17,12 @@
 		</layout>
 	</appender>
 
+	<logger name="com.hazelcast" additivity="false">
+		<level value="WARN" />
+		<appender-ref ref="console" />
+	</logger>
+
+
 	<root>
 		<level value="DEBUG" />
 		<appender-ref ref="file" />
