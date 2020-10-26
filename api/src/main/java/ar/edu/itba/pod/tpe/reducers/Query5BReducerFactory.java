@@ -3,22 +3,22 @@ package ar.edu.itba.pod.tpe.reducers;
 import com.hazelcast.mapreduce.Reducer;
 import com.hazelcast.mapreduce.ReducerFactory;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.NavigableSet;
+import java.util.TreeSet;
 
-public class Query5BReducerFactory implements ReducerFactory<Long, String, Set<String>> {
+public class Query5BReducerFactory implements ReducerFactory<Long, String, NavigableSet<String>> {
 
         @Override
-        public Reducer<String, Set<String>> newReducer(Long thousands) {
+        public Reducer<String, NavigableSet<String>> newReducer(Long thousands) {
         return new Query5BReducerFactory.Query5BReducer();
     }
 
-        private class Query5BReducer extends Reducer<String, Set<String>> {
-            private Set<String> values;
+        private class Query5BReducer extends Reducer<String, NavigableSet<String>> {
+            private NavigableSet<String> values;
 
             @Override
             public void beginReduce() {
-                values = new HashSet<>();
+                values = new TreeSet<>();
             }
 
             @Override
@@ -27,7 +27,7 @@ public class Query5BReducerFactory implements ReducerFactory<Long, String, Set<S
             }
 
             @Override
-            public Set<String> finalizeReduce() {
+            public NavigableSet<String> finalizeReduce() {
                 return values;
             }
         }

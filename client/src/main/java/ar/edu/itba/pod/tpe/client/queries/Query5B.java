@@ -2,6 +2,7 @@ package ar.edu.itba.pod.tpe.client.queries;
 
 import ar.edu.itba.pod.tpe.client.utils.ClientUtils;
 import ar.edu.itba.pod.tpe.client.utils.ThrowableBiConsumer;
+import ar.edu.itba.pod.tpe.collators.Query5BCollator;
 import ar.edu.itba.pod.tpe.mappers.Query5BMapper;
 import ar.edu.itba.pod.tpe.mappers.Query5Mapper;
 import ar.edu.itba.pod.tpe.models.Neighbourhood;
@@ -28,16 +29,16 @@ public class Query5B {
             throws InterruptedException, ExecutionException {
 
 
-        final JobCompletableFuture<SortedSet<ComparableTrio<Long, String, String>> future = job
-                .mapper(new Query5BMapper()) // same as query 1
+        final JobCompletableFuture<SortedSet<ComparableTrio<Long, String, String>>> future = job
+                .mapper(new Query5BMapper())
                 .reducer(new Query5BReducerFactory())
-                .submit();
+                .submit(new Query5BCollator());
 
         // Wait and retrieve result
         SortedSet<ComparableTrio<Long, String, String>> result;
         result = future.get();
 
-        ClientUtils.genericCSVPrinter3(outPath + "query4.csv", result, printQuery);
+        ClientUtils.genericCSVPrinter3(outPath + "query5.csv", result, printQuery);
     }
 
     /**

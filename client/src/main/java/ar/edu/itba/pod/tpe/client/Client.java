@@ -4,6 +4,7 @@ import ar.edu.itba.pod.tpe.client.exceptions.ArgumentException;
 import ar.edu.itba.pod.tpe.client.queries.Query1;
 import ar.edu.itba.pod.tpe.client.queries.Query4;
 import ar.edu.itba.pod.tpe.client.queries.Query5;
+import ar.edu.itba.pod.tpe.client.queries.Query5B;
 import ar.edu.itba.pod.tpe.client.utils.ClientUtils;
 import ar.edu.itba.pod.tpe.client.utils.Parser;
 import ar.edu.itba.pod.tpe.models.Neighbourhood;
@@ -56,6 +57,16 @@ public class Client {
             return;
         }
 
+        logger.info("Inicio de la lectura del archivo de ciudades");
+        try {
+            neighborhoods = Parser.parseNeighbourhood(inPath, city);
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
+            System.exit(ERROR_STATUS);
+            return;
+        }
+        logger.info("Fin de la lectura del archivo de ciudades");
+
         ClientConfig config = new ClientConfig();
         config.getGroupConfig().setName("g6-cluster").setPassword("123456");
         config.getNetworkConfig().addAddress(clusterAddresses.toArray(new String[0]));
@@ -75,24 +86,12 @@ public class Client {
         }
         logger.info("Fin de la lectura del archivo");
 
-
-        logger.info("Inicio de la lectura del archivo de ciudades");
-        try {
-            neighborhoods = Parser.parseNeighbourhood(inPath, city);
-        } catch (IOException e) {
-            System.err.println(e.getMessage());
-            System.exit(ERROR_STATUS);
-            return;
-        }
-        logger.info("Fin de la lectura del archivo de ciudades");
-
-
         final KeyValueSource<Neighbourhood, List<Tree>> source = KeyValueSource.fromMap(map);
         final Job<Neighbourhood, List<Tree>> job = jobTracker.newJob(source);
 
         logger.info("Inicio del trabajo map/reduce");
         try {
-            runQuery(job, jobTracker);
+            runQuery(job, jobTracker, hz);
         } catch (InterruptedException | ExecutionException e) {
             System.err.println("Future execution interrupted. Exiting...");
             System.exit(ERROR_STATUS);
@@ -140,7 +139,7 @@ public class Client {
     }
 
     // TODO: VER COMO HACER ESTO DE MANERA MAS PROLIJA
-    private static void runQuery(Job<Neighbourhood, List<Tree>> job, JobTracker jobTracker)
+    private static void runQuery(Job<Neighbourhood, List<Tree>> job, JobTracker jobTracker, HazelcastInstance hz)
             throws InterruptedException, ExecutionException {
 
         switch (query) {
@@ -155,7 +154,14 @@ public class Client {
                 Query4.runQuery(job, treeName, minNumber, outPath);
                 break;
             case "query5":
-                Query5.runQuery(job, jobTracker, outPath);
+                final Map<String, Long> result = Query5.runQuery(job);
+                final IMap<String, Long> map = hz.getMap("g6-map-" + query + "-aux");
+                map.clear();
+                map.putAll(result);
+
+                final KeyValueSource<String, Long> source = KeyValueSource.fromMap(map);
+                final Job<String, Long> secondJob = jobTracker.newJob(source);
+                Query5B.runQuery(secondJob, outPath);
                 break;
             default:
                 break;
