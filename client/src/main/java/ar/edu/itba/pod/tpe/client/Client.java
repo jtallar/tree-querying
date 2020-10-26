@@ -74,6 +74,7 @@ public class Client {
         ClientConfig config = new ClientConfig();
         config.getGroupConfig().setName("g6-cluster").setPassword("123456");
         config.getNetworkConfig().addAddress(clusterAddresses.toArray(new String[0]));
+        config.setProperty("hazelcast.logging.type", "slf4j");
         HazelcastInstance hz = HazelcastClient.newHazelcastClient(config);
 
         JobTracker jobTracker = hz.getJobTracker("g6-job-" + query);
@@ -104,6 +105,7 @@ public class Client {
         logger.info("Fin del trabajo map/reduce");
 
         hz.shutdown();
+        System.out.println(query + " terminada, saliendo...");
     }
 
     // TODO: ver como marcar que argumentos son requeridos segun el numero de query
