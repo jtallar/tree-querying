@@ -1,5 +1,6 @@
 package ar.edu.itba.pod.tpe.client.queries;
 
+import ar.edu.itba.pod.tpe.client.utils.ClientUtils;
 import ar.edu.itba.pod.tpe.client.utils.ThrowableBiConsumer;
 import ar.edu.itba.pod.tpe.collators.Query2Collator;
 import ar.edu.itba.pod.tpe.keyPredicates.NeighbourhoodKeyPredicate;
@@ -16,7 +17,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
 
 public class Query2 {
@@ -40,15 +40,15 @@ public class Query2 {
             e.printStackTrace();
         }
 
-        //ClientUtils.genericCSVPrinter(outPath + "query2.csv", result, printQuery);
+        ClientUtils.mapSVPrinter(outPath + "query2.csv", result, printQuery);
     }
 
-    private static final ThrowableBiConsumer<SortedSet<ComparablePair<String, String>>, CSVPrinter, IOException> printQuery = (results, printer) -> {
+    private static final ThrowableBiConsumer<Map<String,ComparablePair<String,Long>> , CSVPrinter, IOException> printQuery = (results, printer) -> {
         // Print header and fill csv with results
         printer.printRecord(QUERY_HEADER);
-        results.forEach(p -> {
+        results.forEach( (p, q) -> {
             try {
-                printer.printRecord(p.getFirst(), p.getSecond());
+                printer.printRecord(p, q.getFirst(), q.getSecond());
             } catch (IOException e) {
                 e.printStackTrace();
             }

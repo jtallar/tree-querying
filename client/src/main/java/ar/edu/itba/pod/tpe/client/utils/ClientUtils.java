@@ -1,6 +1,5 @@
 package ar.edu.itba.pod.tpe.client.utils;
 
-import ar.edu.itba.pod.tpe.client.utils.ThrowableBiConsumer;
 import ar.edu.itba.pod.tpe.utils.ComparablePair;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
@@ -10,6 +9,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Map;
 import java.util.SortedSet;
 
 public class ClientUtils {
@@ -29,6 +29,21 @@ public class ClientUtils {
      * @param printFunction Print function to be applied.
      */
     public static void genericCSVPrinter(String file, SortedSet<ComparablePair<String, String>> result, ThrowableBiConsumer<SortedSet<ComparablePair<String, String>>, CSVPrinter, IOException> printFunction) {
+        try (final CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(file), CSVFormat.newFormat(';')
+                .withRecordSeparator('\n'))) {
+
+            // Applies function to result and writes on the csv
+            printFunction.accept(result, csvPrinter);
+
+            // Closes the csv printer
+            csvPrinter.flush();
+        } catch (IOException e){
+            System.err.println("Error while printing CSV file");
+        }
+    }
+
+
+    public static void mapSVPrinter(String file, Map<String,ComparablePair<String,Long>> result, ThrowableBiConsumer< Map<String,ComparablePair<String,Long>>, CSVPrinter, IOException> printFunction) {
         try (final CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(file), CSVFormat.newFormat(';')
                 .withRecordSeparator('\n'))) {
 

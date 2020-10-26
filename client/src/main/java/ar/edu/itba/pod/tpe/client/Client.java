@@ -132,7 +132,16 @@ public class Client {
             case "query1":
                 break;
             case "query2":
-                //Query2.runQuery(job,minNumber,outPath);
+                //TODO: sacarlo de aca y ver donde lo agregamos, mas de una query lo necesita.
+                Map<String, Integer>  neigh;
+                try {
+                    neigh = Parser.parseNeighbourhood(inPath, city);
+                } catch (IOException e) {
+                    System.err.println(e.getMessage());
+                    System.exit(ERROR_STATUS);
+                    return;
+                }
+                Query2.runQuery(job,neigh,minNumber,outPath);
                 break;
             case "query3":
                 break;
