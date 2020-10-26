@@ -25,11 +25,11 @@ public class Query2Collator implements
                 String aux = elem.getKey().getNeighbourhood();
                 if(!out.containsKey(aux)){
                     out.put(aux,
-                            new ComparablePair<>(elem.getKey().getTree(),elem.getValue()));
+                            new ComparablePair<>(elem.getKey().getStreet(),elem.getValue()));
                 }
                 else if(out.get(aux).getSecond() < elem.getValue()){
                     out.get(aux).setSecond(elem.getValue());
-                    out.get(aux).setFirst(elem.getKey().getTree());
+                    out.get(aux).setFirst(elem.getKey().getStreet());
                 }
             }
         }

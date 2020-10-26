@@ -14,7 +14,7 @@ public class Query2Mapper implements Mapper<Neighbourhood, List<Tree>, TreeStree
     @Override
     public void map(Neighbourhood neighbourhood, List<Tree> trees, Context<TreeStreet, Long> context) {
         for(Tree t : trees){
-            context.emit(new TreeStreet(neighbourhood.getName(), t.getCommon_name()),ONE);
+            context.emit(new TreeStreet(neighbourhood.getName(), t.getStreet_name()),ONE);
         }
     }
 }

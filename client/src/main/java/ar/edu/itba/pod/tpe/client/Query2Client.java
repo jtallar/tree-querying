@@ -84,7 +84,7 @@ public class Query2Client {
                 .keyPredicate(new NeighbourhoodKeyPredicate(neigh))
                 .mapper(new Query2Mapper())
                 .reducer(new Query2Reducer())
-                .submit(new Query2Collator(2000));
+                .submit(new Query2Collator(20));
 
         // Wait and retrieve result
         Map<String,ComparablePair<String,Long>> result = new HashMap<>();

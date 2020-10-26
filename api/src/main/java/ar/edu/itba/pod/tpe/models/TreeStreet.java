@@ -11,22 +11,22 @@ import java.util.Objects;
 public class TreeStreet implements DataSerializable {
 
     private String neighbourhood;
-    private String tree;
+    private String street;
 
     public TreeStreet() {
     }
 
-    public TreeStreet(String neighbourhood, String tree) {
+    public TreeStreet(String neighbourhood, String street) {
         this.neighbourhood = neighbourhood;
-        this.tree = tree;
+        this.street = street;
     }
 
     public String getNeighbourhood() {
         return neighbourhood;
     }
 
-    public String getTree() {
-        return tree;
+    public String getStreet() {
+        return street;
     }
 
     @Override
@@ -35,23 +35,23 @@ public class TreeStreet implements DataSerializable {
         if (o == null || getClass() != o.getClass()) return false;
         TreeStreet that = (TreeStreet) o;
         return Objects.equals(neighbourhood, that.neighbourhood) &&
-                Objects.equals(tree, that.tree);
+                Objects.equals(street, that.street);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(neighbourhood, tree);
+        return Objects.hash(neighbourhood, street);
     }
 
     @Override
     public void writeData(ObjectDataOutput out) throws IOException {
         out.writeUTF(neighbourhood);
-        out.writeUTF(tree);
+        out.writeUTF(street);
     }
 
     @Override
     public void readData(ObjectDataInput in) throws IOException {
         neighbourhood = in.readUTF();
-        tree = in.readUTF();
+        street = in.readUTF();
     }
 }
