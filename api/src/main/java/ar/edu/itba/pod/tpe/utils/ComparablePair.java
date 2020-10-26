@@ -56,7 +56,7 @@ public class ComparablePair<F extends Comparable<F>, S extends Comparable<S>> im
     }
 
     public int compareToModified(ComparablePair<F, S> o) {
-        int c = o.first.compareTo(first);
+        int c = first.compareTo(o.first) * (-1);
         return (c != 0) ? c : second.compareTo(o.second);
     }
 

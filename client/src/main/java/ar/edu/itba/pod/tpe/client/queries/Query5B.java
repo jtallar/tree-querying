@@ -16,9 +16,7 @@ import com.hazelcast.mapreduce.JobCompletableFuture;
 import org.apache.commons.csv.CSVPrinter;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.SortedSet;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 public class Query5B {
@@ -29,7 +27,7 @@ public class Query5B {
             throws InterruptedException, ExecutionException {
 
 
-        final JobCompletableFuture<SortedSet<ComparableTrio<Long, String, String>>> future = job
+        final JobCompletableFuture<NavigableSet<ComparableTrio<Long, String, String>>> future = job
                 .mapper(new Query5BMapper())
                 .reducer(new Query5BReducerFactory())
                 .submit(new Query5BCollator());

@@ -1,4 +1,4 @@
-26/10/2020 12:54:06:0065 INFO  Client:77 - Inicio de la lectura del archivo
-26/10/2020 12:54:06:0877 INFO  Client:85 - Fin de la lectura del archivo
-26/10/2020 12:54:06:0881 INFO  Client:90 - Inicio del trabajo map/reduce
-26/10/2020 12:54:07:0063 INFO  Client:98 - Fin del trabajo map/reduce
+26/10/2020 14:51:46:0827 INFO  Client:77 - Inicio de la lectura del archivo
+26/10/2020 14:51:47:0636 INFO  Client:85 - Fin de la lectura del archivo
+26/10/2020 14:51:47:0641 INFO  Client:90 - Inicio del trabajo map/reduce
+26/10/2020 14:51:47:0845 INFO  Client:98 - Fin del trabajo map/reduce

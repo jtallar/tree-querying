@@ -4,6 +4,8 @@ import com.hazelcast.mapreduce.Reducer;
 import com.hazelcast.mapreduce.ReducerFactory;
 
 import java.util.NavigableSet;
+import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeSet;
 
 public class Query5BReducerFactory implements ReducerFactory<Long, String, NavigableSet<String>> {
