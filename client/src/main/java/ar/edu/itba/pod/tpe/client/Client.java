@@ -114,12 +114,12 @@ public class Client {
         inPath = Optional.ofNullable(properties.getProperty(IN_PATH_PARAM)).orElseThrow(new ArgumentException("In path must be supplied using -DinPath"));
         outPath = Optional.ofNullable(properties.getProperty(OUT_PATH_PARAM)).orElseThrow(new ArgumentException("Out path must be supplied using -DoutPath"));
 
-        try {
-            minNumber = Integer.parseInt(properties.getProperty(MIN_PARAM));
-            if (minNumber < 0) throw new NumberFormatException();
-        } catch (NumberFormatException e) {
-            throw new ArgumentException("min number must be supplied using -Dmin and it must be a positive or zero number");
-        }
+//        try {
+//            minNumber = Integer.parseInt(properties.getProperty(MIN_PARAM));
+//            if (minNumber < 0) throw new NumberFormatException();
+//        } catch (NumberFormatException e) {
+//            throw new ArgumentException("min number must be supplied using -Dmin and it must be a positive or zero number");
+//        }
 
         try {
             limit = Integer.parseInt(properties.getProperty(N_PARAM));

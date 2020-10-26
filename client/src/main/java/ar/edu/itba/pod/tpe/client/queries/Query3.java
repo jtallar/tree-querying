@@ -15,6 +15,7 @@ import org.apache.commons.csv.CSVPrinter;
 import java.io.IOException;
 import java.util.List;
 import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.concurrent.ExecutionException;
 
 public class Query3 {
@@ -22,16 +23,26 @@ public class Query3 {
 
     public static void runQuery(Job<Neighbourhood, List<Tree>> job, int limit, String outPath)
             throws InterruptedException, ExecutionException {
-        final JobCompletableFuture<SortedSet<ComparablePair<String, String>>> future = job
+
+        final JobCompletableFuture<SortedSet<ComparablePair<String, Double>>> future = job
                 .mapper(new Query3Mapper())
                 .reducer(new Query3ReducerFactory())
                 .submit(new Query3Collator(limit));
 
         // Wait and retrieve result
-        SortedSet<ComparablePair<String, String>> result;
-        result = future.get();
+        SortedSet<ComparablePair<String, Double>> original;
 
-        ClientUtils.genericCSVPrinter(outPath + "query3.csv", result, printQuery);
+        original = future.get();
+
+        System.out.println("Query 3\n");
+        for(ComparablePair<String, Double> s : original){
+            System.out.println("\nArbol: "+ s.getFirst() + "  Diametro: " + s.getSecond());
+        }
+//        SortedSet<ComparablePair<String, String>> result = new TreeSet<>();
+//        for(ComparablePair<String, Double> value : original){
+//            result.add(new ComparablePair<>(value.getFirst(), value.getSecond().toString()));
+//        }
+//        ClientUtils.genericCSVPrinter(outPath + "query3.csv", result, printQuery);
     }
 
     /**
