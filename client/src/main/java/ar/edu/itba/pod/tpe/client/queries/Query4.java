@@ -35,6 +35,18 @@ public class Query4 {
         ClientUtils.genericCSVPrinter(outPath + "query4.csv", result, printQuery);
     }
 
+    // TODO: Integrar ambas, que solo se usa esta que devuelve y que tenga otra llamada para printear
+    public static SortedSet<ComparablePair<String, String>> runQueryTest(Job<Neighbourhood, List<Tree>> job, String treeName, int minNumber)
+            throws InterruptedException, ExecutionException {
+        final JobCompletableFuture<SortedSet<ComparablePair<String, String>>> future = job
+                .mapper(new Query4Mapper(treeName))
+                .reducer(new Query4ReducerFactory())
+                .submit(new Query4Collator(minNumber));
+
+        // Wait and retrieve result
+        return future.get();
+    }
+
     /**
      * Throwable consumer, prints the result as a BarrioA;BarrioB
      */
