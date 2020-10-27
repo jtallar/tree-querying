@@ -8,10 +8,10 @@ import com.hazelcast.mapreduce.Mapper;
 import java.util.List;
 
 /**
- * Receives nothing as a parameter in constructor
- * Emits 1 for each tree
+ * Given a key-value pair, with the neighbourhood as key and a list of trees as value,
+ * emits 1 for each tree (n this case, the size of the list), with its neighbourhood name as the key.
  */
-public class Query1Mapper implements Mapper<Neighbourhood, List<Tree>, String, Long> {
+public class NeighbourhoodTreeMapper implements Mapper<Neighbourhood, List<Tree>, String, Long> {
     private static final long serialVersionUID = 8608574752502124582L;
 
     @Override

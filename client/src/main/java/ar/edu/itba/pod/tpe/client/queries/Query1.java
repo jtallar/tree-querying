@@ -4,7 +4,7 @@ import ar.edu.itba.pod.tpe.client.utils.ClientUtils;
 import ar.edu.itba.pod.tpe.client.utils.ThrowableBiConsumer;
 import ar.edu.itba.pod.tpe.collators.Query1Collator;
 import ar.edu.itba.pod.tpe.keyPredicates.NeighbourhoodKeyPredicate;
-import ar.edu.itba.pod.tpe.mappers.Query1Mapper;
+import ar.edu.itba.pod.tpe.mappers.NeighbourhoodTreeMapper;
 import ar.edu.itba.pod.tpe.models.Neighbourhood;
 import ar.edu.itba.pod.tpe.models.Tree;
 import ar.edu.itba.pod.tpe.reducers.Query1ReducerFactory;
@@ -27,7 +27,7 @@ public class Query1 {
             throws InterruptedException, ExecutionException  {
         final JobCompletableFuture<Set<ComparablePair<Double, String>>> future = job
                 .keyPredicate(new NeighbourhoodKeyPredicate(neighbouhoods))
-                .mapper(new Query1Mapper())
+                .mapper(new NeighbourhoodTreeMapper())
                 .reducer(new Query1ReducerFactory()) // same as query 4
                 .submit(new Query1Collator(neighbouhoods));
 

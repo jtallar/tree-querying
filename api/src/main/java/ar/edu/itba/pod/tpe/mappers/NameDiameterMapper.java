@@ -7,20 +7,16 @@ import com.hazelcast.mapreduce.Mapper;
 
 import java.util.List;
 
-
 /**
- * Recieves treeName as a parameter in constructor
- * Emits 1 for each tree
+ * Given a key-value pair, with the neighbourhood as key and a list of trees as value,
+ * emits the diameter for each tree, with its common name as the key.
+ * The processing is made in parallel to make it faster, as the order has no relevance.
  */
-public class Query3Mapper implements Mapper<Neighbourhood, List<Tree>, String, Double> {
+public class NameDiameterMapper implements Mapper<Neighbourhood, List<Tree>, String, Double> {
     private static final long serialVersionUID = 3909833743234320270L;
-
-    public Query3Mapper() {}
 
     @Override
     public void map(Neighbourhood neighbourhood, List<Tree> trees, Context<String, Double> context) {
-        for (Tree tree : trees) {
-            context.emit(tree.getCommon_name(), tree.getDiameter());
-        }
+        trees.parallelStream().forEach(t -> context.emit(t.getCommonName(), t.getDiameter()));
     }
 }

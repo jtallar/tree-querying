@@ -4,7 +4,7 @@ import ar.edu.itba.pod.tpe.client.utils.ClientUtils;
 import ar.edu.itba.pod.tpe.client.utils.ThrowableBiConsumer;
 import ar.edu.itba.pod.tpe.collators.Query2Collator;
 import ar.edu.itba.pod.tpe.keyPredicates.NeighbourhoodKeyPredicate;
-import ar.edu.itba.pod.tpe.mappers.Query2Mapper;
+import ar.edu.itba.pod.tpe.mappers.StreetTreeMapper;
 import ar.edu.itba.pod.tpe.models.Neighbourhood;
 import ar.edu.itba.pod.tpe.models.Tree;
 import ar.edu.itba.pod.tpe.reducers.Query2Reducer;
@@ -26,7 +26,7 @@ public class Query2 {
 
         final JobCompletableFuture<Map<String,ComparablePair<String,Long>>> future = job
                 .keyPredicate(new NeighbourhoodKeyPredicate(neigh))
-                .mapper(new Query2Mapper())
+                .mapper(new StreetTreeMapper())
                 .reducer(new Query2Reducer())
                 .submit(new Query2Collator(minNumber));
 
@@ -42,7 +42,7 @@ public class Query2 {
             throws InterruptedException, ExecutionException {
         final JobCompletableFuture<Map<String,ComparablePair<String,Long>>> future = job
                 .keyPredicate(new NeighbourhoodKeyPredicate(neigh))
-                .mapper(new Query2Mapper())
+                .mapper(new StreetTreeMapper())
                 .reducer(new Query2Reducer())
                 .submit(new Query2Collator(minNumber));
 

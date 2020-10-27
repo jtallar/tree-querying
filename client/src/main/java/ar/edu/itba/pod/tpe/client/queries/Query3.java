@@ -3,13 +3,10 @@ package ar.edu.itba.pod.tpe.client.queries;
 import ar.edu.itba.pod.tpe.client.utils.ClientUtils;
 import ar.edu.itba.pod.tpe.client.utils.ThrowableBiConsumer;
 import ar.edu.itba.pod.tpe.collators.Query3Collator;
-import ar.edu.itba.pod.tpe.collators.Query4Collator;
-import ar.edu.itba.pod.tpe.mappers.Query3Mapper;
-import ar.edu.itba.pod.tpe.mappers.Query4Mapper;
+import ar.edu.itba.pod.tpe.mappers.NameDiameterMapper;
 import ar.edu.itba.pod.tpe.models.Neighbourhood;
 import ar.edu.itba.pod.tpe.models.Tree;
 import ar.edu.itba.pod.tpe.reducers.Query3ReducerFactory;
-import ar.edu.itba.pod.tpe.reducers.Query4ReducerFactory;
 import ar.edu.itba.pod.tpe.utils.ComparablePair;
 import com.hazelcast.mapreduce.Job;
 import com.hazelcast.mapreduce.JobCompletableFuture;
@@ -21,7 +18,6 @@ import java.text.DecimalFormatSymbols;
 import java.util.List;
 import java.util.Locale;
 import java.util.SortedSet;
-import java.util.TreeSet;
 import java.util.concurrent.ExecutionException;
 
 public class Query3 {
@@ -31,7 +27,7 @@ public class Query3 {
             throws InterruptedException, ExecutionException {
 
         final JobCompletableFuture<SortedSet<ComparablePair<String, Double>>> future = job
-                .mapper(new Query3Mapper())
+                .mapper(new NameDiameterMapper())
                 .reducer(new Query3ReducerFactory())
                 .submit(new Query3Collator(limit));
 
@@ -47,7 +43,7 @@ public class Query3 {
     public static SortedSet<ComparablePair<String, Double>> runQueryTest(Job<Neighbourhood, List<Tree>> job, long limit)
             throws InterruptedException, ExecutionException {
         final JobCompletableFuture<SortedSet<ComparablePair<String, Double>>> future = job
-                .mapper(new Query3Mapper())
+                .mapper(new NameDiameterMapper())
                 .reducer(new Query3ReducerFactory())
                 .submit(new Query3Collator(limit));
 

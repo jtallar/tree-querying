@@ -3,13 +3,8 @@ package ar.edu.itba.pod.tpe.client.queries;
 import ar.edu.itba.pod.tpe.client.utils.ClientUtils;
 import ar.edu.itba.pod.tpe.client.utils.ThrowableBiConsumer;
 import ar.edu.itba.pod.tpe.collators.Query5BCollator;
-import ar.edu.itba.pod.tpe.mappers.Query5BMapper;
-import ar.edu.itba.pod.tpe.mappers.Query5Mapper;
-import ar.edu.itba.pod.tpe.models.Neighbourhood;
-import ar.edu.itba.pod.tpe.models.Tree;
+import ar.edu.itba.pod.tpe.mappers.InverterMapper;
 import ar.edu.itba.pod.tpe.reducers.Query5BReducerFactory;
-import ar.edu.itba.pod.tpe.reducers.Query5ReducerFactory;
-import ar.edu.itba.pod.tpe.utils.ComparablePair;
 import ar.edu.itba.pod.tpe.utils.ComparableTrio;
 import com.hazelcast.mapreduce.Job;
 import com.hazelcast.mapreduce.JobCompletableFuture;
@@ -28,7 +23,7 @@ public class Query5B {
 
 
         final JobCompletableFuture<NavigableSet<ComparableTrio<Long, String, String>>> future = job
-                .mapper(new Query5BMapper())
+                .mapper(new InverterMapper())
                 .reducer(new Query5BReducerFactory())
                 .submit(new Query5BCollator());
 

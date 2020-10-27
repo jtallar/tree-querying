@@ -3,7 +3,7 @@ package ar.edu.itba.pod.tpe.client.queries;
 import ar.edu.itba.pod.tpe.client.utils.ClientUtils;
 import ar.edu.itba.pod.tpe.client.utils.ThrowableBiConsumer;
 import ar.edu.itba.pod.tpe.collators.Query4Collator;
-import ar.edu.itba.pod.tpe.mappers.Query4Mapper;
+import ar.edu.itba.pod.tpe.mappers.NeighbourhoodTreeFilteredMapper;
 import ar.edu.itba.pod.tpe.models.Neighbourhood;
 import ar.edu.itba.pod.tpe.models.Tree;
 import ar.edu.itba.pod.tpe.reducers.Query4ReducerFactory;
@@ -24,7 +24,7 @@ public class Query4 {
     public static void runQuery(Job<Neighbourhood, List<Tree>> job, String treeName, long minNumber, String outPath)
             throws InterruptedException, ExecutionException {
         final JobCompletableFuture<SortedSet<ComparablePair<String, String>>> future = job
-                .mapper(new Query4Mapper(treeName))
+                .mapper(new NeighbourhoodTreeFilteredMapper(treeName))
                 .reducer(new Query4ReducerFactory())
                 .submit(new Query4Collator(minNumber));
 
@@ -39,7 +39,7 @@ public class Query4 {
     public static SortedSet<ComparablePair<String, String>> runQueryTest(Job<Neighbourhood, List<Tree>> job, String treeName, long minNumber)
             throws InterruptedException, ExecutionException {
         final JobCompletableFuture<SortedSet<ComparablePair<String, String>>> future = job
-                .mapper(new Query4Mapper(treeName))
+                .mapper(new NeighbourhoodTreeFilteredMapper(treeName))
                 .reducer(new Query4ReducerFactory())
                 .submit(new Query4Collator(minNumber));
 
