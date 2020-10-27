@@ -6,9 +6,7 @@ import com.hazelcast.mapreduce.Collator;
 
 import java.util.*;
 
-public class Query2Collator implements
-        Collator<Map.Entry<Street,Long>,Map<String, ComparablePair<String,Long>>> {
-
+public class Query2Collator implements Collator<Map.Entry<Street, Long>, Map<String, ComparablePair<String, Long>>> {
     private final long min;
 
     public Query2Collator(long min) {
