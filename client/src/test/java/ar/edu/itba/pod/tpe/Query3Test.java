@@ -53,7 +53,7 @@ public class Query3Test {
     @Test
     public void testNoTrees() throws ExecutionException, InterruptedException {
         // Run Query
-        final SortedSet<ComparablePair<String, Double>> result =
+        final SortedSet<ComparablePair<Double, String>> result =
                 Query3.runQueryTest(jobTracker.newJob(KeyValueSource.fromMap(hzMap)), 1);
 
         // Assertions
@@ -73,15 +73,15 @@ public class Query3Test {
         hzMap.putAll(map);
 
         // Run Query
-        final SortedSet<ComparablePair<String, Double>> result =
+        final SortedSet<ComparablePair<Double, String>> result =
                 Query3.runQueryTest(jobTracker.newJob(KeyValueSource.fromMap(hzMap)), 2);
-        List<ComparablePair<String, Double>> expected = Arrays.asList(
-                new ComparablePair<>(TREE_A, (DIAMETER_A_1+DIAMETER_A_2)/2),
-                new ComparablePair<>(TREE_B, (DIAMETER_B_1+DIAMETER_B_2)/2));
+        List<ComparablePair<Double, String>> expected = Arrays.asList(
+                new ComparablePair<>((DIAMETER_A_1+DIAMETER_A_2)/2, TREE_A),
+                new ComparablePair<>((DIAMETER_B_1+DIAMETER_B_2)/2, TREE_B));
 
         // Assertions
         int i = 0;
-        for (ComparablePair<String, Double> pair : result) {
+        for (ComparablePair<Double, String> pair : result) {
             assertEquals(expected.get(i), pair);
             i++;
         }
@@ -104,17 +104,17 @@ public class Query3Test {
         hzMap.putAll(map);
 
         // Run Query
-        final SortedSet<ComparablePair<String, Double>> result =
+        final SortedSet<ComparablePair<Double, String>> result =
                 Query3.runQueryTest(jobTracker.newJob(KeyValueSource.fromMap(hzMap)), 4);
-        List<ComparablePair<String, Double>> expected = Arrays.asList(
-                new ComparablePair<>(TREE_B + "2", (DIAMETER_B_2+20.0)),
-                new ComparablePair<>(TREE_A, (DIAMETER_A_1+DIAMETER_A_2)/2),
-                new ComparablePair<>(TREE_B, (DIAMETER_B_1+DIAMETER_B_2)/2),
-                new ComparablePair<>(TREE_C, (DIAMETER_B_1+DIAMETER_B_2)/2));
+        List<ComparablePair<Double, String>> expected = Arrays.asList(
+                new ComparablePair<>((DIAMETER_B_2+20.0), TREE_B + "2"),
+                new ComparablePair<>((DIAMETER_A_1+DIAMETER_A_2)/2, TREE_A),
+                new ComparablePair<>((DIAMETER_B_1+DIAMETER_B_2)/2, TREE_B),
+                new ComparablePair<>((DIAMETER_B_1+DIAMETER_B_2)/2, TREE_C));
 
         // Assertions
         int i = 0;
-        for (ComparablePair<String, Double> pair : result) {
+        for (ComparablePair<Double, String> pair : result) {
             assertEquals(expected.get(i), pair);
             i++;
         }
@@ -136,16 +136,16 @@ public class Query3Test {
         hzMap.putAll(map);
 
         // Run Query
-        final SortedSet<ComparablePair<String, Double>> result =
+        final SortedSet<ComparablePair<Double, String>> result =
                 Query3.runQueryTest(jobTracker.newJob(KeyValueSource.fromMap(hzMap)), 3);
-        List<ComparablePair<String, Double>> expected = Arrays.asList(
-                new ComparablePair<>(TREE_A, (DIAMETER_A_1+DIAMETER_A_2)/2),
-                new ComparablePair<>(TREE_B, (DIAMETER_B_1+DIAMETER_B_2)/2),
-                new ComparablePair<>(TREE_C, (DIAMETER_B_1+DIAMETER_B_2)/2));
+        List<ComparablePair<Double, String>> expected = Arrays.asList(
+                new ComparablePair<>((DIAMETER_A_1+DIAMETER_A_2)/2, TREE_A),
+                new ComparablePair<>((DIAMETER_B_1+DIAMETER_B_2)/2, TREE_B),
+                new ComparablePair<>((DIAMETER_B_1+DIAMETER_B_2)/2, TREE_C));
 
         // Assertions
         int i = 0;
-        for (ComparablePair<String, Double> pair : result) {
+        for (ComparablePair<Double, String> pair : result) {
             assertEquals(expected.get(i), pair);
             i++;
         }
@@ -168,12 +168,12 @@ public class Query3Test {
         hzMap.putAll(map);
 
         // Run Query
-        final SortedSet<ComparablePair<String, Double>> result =
+        final SortedSet<ComparablePair<Double, String>> result =
                 Query3.runQueryTest(jobTracker.newJob(KeyValueSource.fromMap(hzMap)), limit);
-        List<ComparablePair<String, Double>> expected = Arrays.asList(
-                new ComparablePair<>(TREE_A, (DIAMETER_A_1+DIAMETER_A_2)/2),
-                new ComparablePair<>(TREE_B, (DIAMETER_B_1+DIAMETER_B_2)/2),
-                new ComparablePair<>(TREE_C, (DIAMETER_B_1+DIAMETER_B_2)/2));
+        List<ComparablePair<Double, String>> expected = Arrays.asList(
+                new ComparablePair<>((DIAMETER_A_1+DIAMETER_A_2)/2, TREE_A),
+                new ComparablePair<>((DIAMETER_B_1+DIAMETER_B_2)/2, TREE_B),
+                new ComparablePair<>((DIAMETER_B_1+DIAMETER_B_2)/2, TREE_C));
 
         // Assertions
         assertEquals(limit, result.size());

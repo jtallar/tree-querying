@@ -19,21 +19,19 @@ public class Query2Collator implements
     public Map<String, ComparablePair<String,Long>> collate(Iterable<Map.Entry<Street, Long>> iterable) {
 
         Map<String, ComparablePair<String,Long>> out = new TreeMap<>(String::compareTo);
-
-        for(Map.Entry<Street,Long> elem : iterable){
-            if(elem.getValue() >= min){
-                String aux = elem.getKey().getNeighbourhood();
-                if(!out.containsKey(aux)){
-                    out.put(aux,
-                            new ComparablePair<>(elem.getKey().getStreet(),elem.getValue()));
-                }
-                else if(out.get(aux).getSecond() < elem.getValue()){
-                    out.get(aux).setSecond(elem.getValue());
-                    out.get(aux).setFirst(elem.getKey().getStreet());
-                }
+        iterable.forEach(e -> {
+            if (e.getValue() < min) return;
+//            out.
+            String aux = e.getKey().getNeighbourhood();
+//            out.computeIfPresent(aux)
+            if(!out.containsKey(aux)) { // si no esta pongo
+                out.put(aux, new ComparablePair<>(e.getKey().getStreet(),e.getValue()));
+            } else if(out.get(aux).getSecond() < e.getValue()) { // si esta, me fijo si cantidad es mayor, en tal caso actualizo
+                out.get(aux).setSecond(e.getValue());
+                out.get(aux).setFirst(e.getKey().getStreet());
             }
-        }
 
+        });
         return out;
     }
 }

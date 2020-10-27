@@ -2,7 +2,7 @@ package ar.edu.itba.pod.tpe.client.queries;
 
 import ar.edu.itba.pod.tpe.client.utils.ClientUtils;
 import ar.edu.itba.pod.tpe.client.utils.ThrowableBiConsumer;
-import ar.edu.itba.pod.tpe.collators.Query5BCollator;
+import ar.edu.itba.pod.tpe.collators.Query5Collator;
 import ar.edu.itba.pod.tpe.mappers.InverterMapper;
 import ar.edu.itba.pod.tpe.reducers.NavigableSetReducerFactory;
 import ar.edu.itba.pod.tpe.utils.ComparableTrio;
@@ -25,7 +25,7 @@ public class Query5B {
         final JobCompletableFuture<NavigableSet<ComparableTrio<Long, String, String>>> future = job
                 .mapper(new InverterMapper())
                 .reducer(new NavigableSetReducerFactory<>())
-                .submit(new Query5BCollator());
+                .submit(new Query5Collator());
 
         // Wait and retrieve result
         SortedSet<ComparableTrio<Long, String, String>> result;

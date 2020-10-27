@@ -9,6 +9,7 @@ import com.hazelcast.mapreduce.ReducerFactory;
  * On the constructor receives the amount of digits to be rounded.
  */
 public class SumReducerFactory<T> implements ReducerFactory<T, Long, Long> {
+    private static final long serialVersionUID = -8257223988384026517L;
     private final int digits;
 
     public SumReducerFactory(int digits) {

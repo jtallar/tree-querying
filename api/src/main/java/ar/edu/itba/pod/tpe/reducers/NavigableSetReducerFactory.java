@@ -11,6 +11,7 @@ import java.util.TreeSet;
  * Reduces only using the value and a NavigableSet of them.
  */
 public class NavigableSetReducerFactory<K, V extends Comparable<V> > implements ReducerFactory<K, V, NavigableSet<V>> {
+    private static final long serialVersionUID = 5318965976879484481L;
 
     @Override
     public Reducer<V, NavigableSet<V>> newReducer(K key) {

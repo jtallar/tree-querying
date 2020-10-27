@@ -51,7 +51,7 @@ public class ClientUtils {
      * @param result Result from the service response.
      * @param printFunction Print function to be applied.
      */
-    public static void genericCSVPrinter4(String file, SortedSet<ComparablePair<String, Double>> result, ThrowableBiConsumer<SortedSet<ComparablePair<String, Double>>, CSVPrinter, IOException> printFunction) {
+    public static void genericCSVPrinter4(String file, SortedSet<ComparablePair<Double, String>> result, ThrowableBiConsumer<SortedSet<ComparablePair<Double, String>>, CSVPrinter, IOException> printFunction) {
         try (final CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(file), CSVFormat.newFormat(';')
                 .withRecordSeparator('\n'))) {
 

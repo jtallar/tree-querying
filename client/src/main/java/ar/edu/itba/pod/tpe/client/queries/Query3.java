@@ -26,20 +26,20 @@ public class Query3 {
     public static void runQuery(Job<Neighbourhood, List<Tree>> job, long limit, String outPath)
             throws InterruptedException, ExecutionException {
 
-        final JobCompletableFuture<SortedSet<ComparablePair<String, Double>>> future = job
+        final JobCompletableFuture<SortedSet<ComparablePair<Double, String>>> future = job
                 .mapper(new NameDiameterMapper())
                 .reducer(new SumAvgReducerFactory<>())
                 .submit(new Query3Collator(limit));
 
         // Wait and retrieve result
-        SortedSet<ComparablePair<String, Double>> result = future.get();
+        SortedSet<ComparablePair<Double, String>> result = future.get();
 
         ClientUtils.genericCSVPrinter4(outPath + "query3.csv", result, printQuery);
     }
 
-    public static SortedSet<ComparablePair<String, Double>> runQueryTest(Job<Neighbourhood, List<Tree>> job, long limit)
+    public static SortedSet<ComparablePair<Double, String>> runQueryTest(Job<Neighbourhood, List<Tree>> job, long limit)
             throws InterruptedException, ExecutionException {
-        final JobCompletableFuture<SortedSet<ComparablePair<String, Double>>> future = job
+        final JobCompletableFuture<SortedSet<ComparablePair<Double, String>>> future = job
                 .mapper(new NameDiameterMapper())
                 .reducer(new SumAvgReducerFactory<>())
                 .submit(new Query3Collator(limit));
@@ -51,13 +51,13 @@ public class Query3 {
     /**
      * Throwable consumer, prints the result as a NOMBRE_CIENTIFICO;PROMEDIO_DIAMETRO
      */
-    private static final ThrowableBiConsumer<SortedSet<ComparablePair<String, Double>>, CSVPrinter, IOException> printQuery = (results, printer) -> {
+    private static final ThrowableBiConsumer<SortedSet<ComparablePair<Double, String>>, CSVPrinter, IOException> printQuery = (results, printer) -> {
         // Print header and fill csv with results
         printer.printRecord(QUERY_HEADER);
         results.forEach(p -> {
             try {
                 DecimalFormat df = new DecimalFormat("#0.00", new DecimalFormatSymbols(Locale.ENGLISH));
-                printer.printRecord(p.getFirst(), df.format(p.getSecond()));
+                printer.printRecord(p.getSecond(), df.format(p.getFirst()));
             } catch (IOException e) {
                 e.printStackTrace();
             }
