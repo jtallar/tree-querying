@@ -21,38 +21,29 @@ import java.util.concurrent.ExecutionException;
 
 
 public class Query1 {
-    private static final String QUERY_HEADER = "GRUPO;ARBOLES_POR_HABITANTE";
 
-    public static void runQuery(Job<Neighbourhood, List<Tree>> job, Map<String, Long> neighbouhoods, String outPath)
+    public static Set<ComparablePair<Double, String>> runQuery(Job<Neighbourhood, List<Tree>> job, Map<String, Long> neighbourhoods)
             throws InterruptedException, ExecutionException  {
+
         final JobCompletableFuture<Set<ComparablePair<Double, String>>> future = job
-                .keyPredicate(new NeighbourhoodKeyPredicate(neighbouhoods))
+                .keyPredicate(new NeighbourhoodKeyPredicate(neighbourhoods))
                 .mapper(new NeighbourhoodTreeMapper())
                 .reducer(new SumReducerFactory<>())
-                .submit(new Query1Collator(neighbouhoods));
-
-        // Wait and retrieve result
-        Set<ComparablePair<Double, String>> result;
-        result = future.get();
-
-        ClientUtils.genericCSVPrinter2(outPath + "query1.csv", result, printQuery);
-
+                .submit(new Query1Collator(neighbourhoods));
+        return future.get();
     }
 
     /**
-     * Throwable consumer, prints the result as a BarrioA;BarrioB
+     * CSV header for this specific query
      */
-    private static final ThrowableBiConsumer<Set<ComparablePair<Double, String>>, CSVPrinter, IOException> printQuery = (results, printer) -> {
-        // Print header and fill csv with results
-        printer.printRecord(QUERY_HEADER);
-        results.forEach(p -> {
-            try {
-                DecimalFormat df = new DecimalFormat("#0.00", new DecimalFormatSymbols(Locale.ENGLISH));
-                printer.printRecord(p.getSecond(), df.format(p.getFirst()));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
+    public static final String HEADER = "GRUPO;ARBOLES_POR_HABITANTE";
+
+    /**
+     * Throwable consumer, prints the result as needed by this query
+     */
+    public static final ThrowableBiConsumer<ComparablePair<Double, String>, CSVPrinter, IOException> print = (e, p) -> {
+        DecimalFormat df = new DecimalFormat("#0.00", new DecimalFormatSymbols(Locale.ENGLISH));
+        p.printRecord(e.getSecond(), df.format(e.getFirst()));
     };
 
 }

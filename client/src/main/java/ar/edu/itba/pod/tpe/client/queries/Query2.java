@@ -19,9 +19,8 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 public class Query2 {
-    private static final String QUERY_HEADER = "BARRIO;CALLE_CON_MAS_ARBOLES;ARBOLES";
 
-    public static void runQuery(Job<Neighbourhood, List<Tree>> job, Map<String, Long>  neigh, long minNumber, String outPath)
+    public static Map<String,ComparablePair<String,Long>> runQuery(Job<Neighbourhood, List<Tree>> job, Map<String, Long>  neigh, long minNumber)
             throws InterruptedException, ExecutionException {
 
         final JobCompletableFuture<Map<String,ComparablePair<String,Long>>> future = job
@@ -29,36 +28,12 @@ public class Query2 {
                 .mapper(new StreetTreeMapper())
                 .reducer(new SumReducerFactory<>())
                 .submit(new Query2Collator(minNumber));
-
-        // Wait and retrieve result
-        Map<String,ComparablePair<String,Long>> result;
-        result = future.get();
-
-        ClientUtils.mapSVPrinter(outPath + "query2.csv", result, printQuery);
-    }
-
-    // TODO: Integrar ambas, que solo se usa esta que devuelve y que tenga otra llamada para printear
-    public static Map<String,ComparablePair<String,Long>> runQueryTest(Job<Neighbourhood, List<Tree>> job, Map<String, Long>  neigh, long minNumber)
-            throws InterruptedException, ExecutionException {
-        final JobCompletableFuture<Map<String,ComparablePair<String,Long>>> future = job
-                .keyPredicate(new NeighbourhoodKeyPredicate(neigh))
-                .mapper(new StreetTreeMapper())
-                .reducer(new SumReducerFactory<>())
-                .submit(new Query2Collator(minNumber));
-
-        // Wait and retrieve result
         return future.get();
     }
 
-    private static final ThrowableBiConsumer<Map<String,ComparablePair<String,Long>> , CSVPrinter, IOException> printQuery = (results, printer) -> {
-        // Print header and fill csv with results
-        printer.printRecord(QUERY_HEADER);
-        results.forEach( (p, q) -> {
-            try {
-                printer.printRecord(p, q.getFirst(), q.getSecond());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
+    public static final String HEADER = "BARRIO;CALLE_CON_MAS_ARBOLES;ARBOLES";
+
+    public static final ThrowableBiConsumer<Map.Entry<String, ComparablePair<String, Long>>, CSVPrinter, IOException> print = (e, p) -> {
+        p.printRecord(e.getKey(), e.getValue().getFirst(), e.getValue().getSecond());
     };
 }
