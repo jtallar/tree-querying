@@ -1,30 +1,5 @@
 package ar.edu.itba.pod.tpe.client;
 
-import ar.edu.itba.pod.tpe.client.exceptions.ArgumentException;
-import ar.edu.itba.pod.tpe.client.utils.ClientUtils;
-import ar.edu.itba.pod.tpe.client.utils.Parser;
-import ar.edu.itba.pod.tpe.keyPredicates.TestKeyPredicate;
-import ar.edu.itba.pod.tpe.mappers.TestMapper;
-import ar.edu.itba.pod.tpe.models.Neighbourhood;
-import ar.edu.itba.pod.tpe.models.Tree;
-import ar.edu.itba.pod.tpe.reducers.TestReducer;
-import com.hazelcast.client.HazelcastClient;
-import com.hazelcast.client.config.ClientConfig;
-import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IMap;
-import com.hazelcast.mapreduce.Job;
-import com.hazelcast.mapreduce.JobCompletableFuture;
-import com.hazelcast.mapreduce.JobTracker;
-import com.hazelcast.mapreduce.KeyValueSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.URISyntaxException;
-import java.util.*;
-import java.util.concurrent.ExecutionException;
-
 public class TestClient {
 //    private static Logger logger = LoggerFactory.getLogger(TestClient.class);
 //
