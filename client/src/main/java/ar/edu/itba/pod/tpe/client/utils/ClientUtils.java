@@ -11,7 +11,12 @@ import java.net.URISyntaxException;
 import java.util.*;
 
 public class ClientUtils {
-
+    /**
+     * Gets the Inet Address form a String
+     * @param hostPort The string to be parsed
+     * @return The parsed Inet Socket Address
+     * @throws URISyntaxException
+     */
     public static InetSocketAddress getInetAddress(String hostPort) throws URISyntaxException {
         if (hostPort == null) throw new URISyntaxException("", "URI can't be null");
         URI uri = new URI("my://" + hostPort);
