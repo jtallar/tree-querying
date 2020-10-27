@@ -1,8 +1,13 @@
 package ar.edu.itba.pod.tpe.utils;
 
-import java.util.Objects;
-
-public class ComparableTrio <F extends Comparable<F>, S extends Comparable<S>, T extends Comparable<T>> implements Comparable<ComparableTrio<F, S, T>> {
+/**
+ * Comparable Trio. A Trio which can be sorted.
+ * @param <F> The first object, extends comparable.
+ * @param <S> The second object, extends comparable.
+ * @param <T> The third object, who also extends from comparable.
+ */
+public class ComparableTrio <F extends Comparable<F>, S extends Comparable<S>, T extends Comparable<T>>
+        implements Comparable<ComparableTrio<F, S, T>> {
     private final F first;
     private final S second;
     private final T third;
@@ -19,6 +24,8 @@ public class ComparableTrio <F extends Comparable<F>, S extends Comparable<S>, T
         this.third = third;
     }
 
+    /** Getters */
+
     public F getFirst() {
         return first;
     }
@@ -31,6 +38,13 @@ public class ComparableTrio <F extends Comparable<F>, S extends Comparable<S>, T
         return third;
     }
 
+    /**
+     * Checks the two objects for equality by delegating to their respective
+     * {@link Object#equals(Object)} methods.
+     * @param o the {@link ComparableTrio} to which this one is to be checked for equality
+     * @return true if the underlying objects of the ComparableTrio are both considered
+     *         equal
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -41,6 +55,10 @@ public class ComparableTrio <F extends Comparable<F>, S extends Comparable<S>, T
                 third.equals(that.getThird());
     }
 
+    /**
+     * Compute a hash code using the hash codes of the underlying objects
+     * @return a hashcode of the ComparablePair
+     */
     @Override
     public int hashCode() {
         return (first == null ? 0 : first.hashCode()) ^
@@ -48,8 +66,27 @@ public class ComparableTrio <F extends Comparable<F>, S extends Comparable<S>, T
                 (third == null ? 0 : third.hashCode());
     }
 
+    /**
+     * Compares this object with the specified object for order.
+     * @return a negative integer, zero, or a positive integer as this object is less
+     * than, equal to, or greater than the specified object.
+     */
     @Override
     public int compareTo(ComparableTrio<F, S, T> o) {
+        int c1 = first.compareTo(o.getFirst());
+        if (c1 != 0) return c1;
+
+        int c2 = second.compareTo(o.getSecond());
+        return (c2 != 0) ? c2 : third.compareTo(o.getThird());
+    }
+
+    /**
+     * Compares this object with the specified object for order.
+     * It inverts the order of the first field.
+     * @return a negative integer, zero, or a positive integer as this object is greater
+     * than, equal to, or less than the specified object.
+     */
+    public int compareToModified(ComparableTrio<F, S, T> o) {
         int c1 = first.compareTo(o.getFirst()) * (-1);
         if (c1 != 0) return c1;
 
@@ -57,6 +94,10 @@ public class ComparableTrio <F extends Comparable<F>, S extends Comparable<S>, T
         return (c2 != 0) ? c2 : third.compareTo(o.getThird());
     }
 
+    /**
+     * Simply overrides the string printing for this class
+     * @return the resulting print string
+     */
     @Override
     public String toString() {
         return "ComparableTrio{" +

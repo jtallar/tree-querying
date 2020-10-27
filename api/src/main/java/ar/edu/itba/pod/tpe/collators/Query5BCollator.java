@@ -15,7 +15,7 @@ public class Query5BCollator implements Collator<Map.Entry<Long, NavigableSet<St
     @Override
     public NavigableSet<ComparableTrio<Long, String, String>> collate(Iterable<Map.Entry<Long, NavigableSet<String>>> iterable) {
 
-        NavigableSet<ComparableTrio<Long, String, String>> out = new TreeSet<>(ComparableTrio::compareTo);
+        NavigableSet<ComparableTrio<Long, String, String>> out = new TreeSet<>(ComparableTrio::compareToModified);
         for (Map.Entry<Long, NavigableSet<String>> e : iterable) {
             if (e.getKey() == 0 || e.getValue().size() < 1) continue;
             addCombinations(out, e.getKey(), e.getValue().first(), e.getValue().tailSet(e.getValue().first(), false));
