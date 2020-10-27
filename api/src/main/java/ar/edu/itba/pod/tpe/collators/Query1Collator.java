@@ -5,8 +5,11 @@ import com.hazelcast.mapreduce.Collator;
 
 import java.util.*;
 
-
-public class Query1Collator implements Collator<Map.Entry<String, Long>, Set<ComparablePair<Double, String>>> {
+/**
+ * Receives entries with String, Long
+ * Returns Sorted set of Comparable Pairs with the neighbourhoods name and its tree per population ratio
+ */
+public class Query1Collator implements Collator<Map.Entry<String, Long>, NavigableSet<ComparablePair<Double, String>>> {
     private final Map<String, Long> neighborhoods;
 
     public Query1Collator(Map<String, Long> neighborhoods) {
@@ -14,9 +17,9 @@ public class Query1Collator implements Collator<Map.Entry<String, Long>, Set<Com
     }
 
     @Override
-    public Set<ComparablePair<Double, String>> collate(Iterable<Map.Entry<String, Long>> iterable) {
+    public NavigableSet<ComparablePair<Double, String>> collate(Iterable<Map.Entry<String, Long>> iterable) {
 
-        Set<ComparablePair<Double, String>> out = new TreeSet<>(ComparablePair::compareToModified);
+        NavigableSet<ComparablePair<Double, String>> out = new TreeSet<>(ComparablePair::compareToModified);
         iterable.forEach(e -> out.add(new ComparablePair<>((double) e.getValue() / neighborhoods.get(e.getKey()), e.getKey())));
         return out;
     }

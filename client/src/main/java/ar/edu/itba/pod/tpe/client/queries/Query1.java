@@ -17,6 +17,7 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
+import java.util.function.BiConsumer;
 
 /**
  * Class with static methods dedicated to solve the Query 1
@@ -31,10 +32,14 @@ public class Query1 {
      * @throws InterruptedException
      * @throws ExecutionException
      */
-    public static Set<ComparablePair<Double, String>> runQuery(Job<Neighbourhood, List<Tree>> job, Map<String, Long> neighbourhoods)
+    public static NavigableSet<ComparablePair<Double, String>> runQuery(Job<Neighbourhood, List<Tree>> job, Map<String, Long> neighbourhoods)
             throws InterruptedException, ExecutionException  {
 
-        final JobCompletableFuture<Set<ComparablePair<Double, String>>> future = job
+        final BiConsumer<Map.Entry<String, Long>, NavigableSet<ComparablePair<Double, String>>> collator = (e, s) -> {
+            s.add(new ComparablePair<>((double) e.getValue() / neighbourhoods.get(e.getKey()), e.getKey()));
+        };
+
+        final JobCompletableFuture<NavigableSet<ComparablePair<Double, String>>> future = job
                 .keyPredicate(new NeighbourhoodKeyPredicate(neighbourhoods))
                 .mapper(new NeighbourhoodTreeMapper())
                 .reducer(new SumReducerFactory<>())
@@ -54,5 +59,4 @@ public class Query1 {
         DecimalFormat df = new DecimalFormat("#0.00", new DecimalFormatSymbols(Locale.ENGLISH));
         p.printRecord(e.getSecond(), df.format(e.getFirst()));
     };
-
 }

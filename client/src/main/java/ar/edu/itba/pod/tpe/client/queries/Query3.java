@@ -14,10 +14,9 @@ import org.apache.commons.csv.CSVPrinter;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.List;
-import java.util.Locale;
-import java.util.SortedSet;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
+import java.util.function.BiConsumer;
 
 /**
  * Class with static methods dedicated to solve the Query 3
@@ -32,10 +31,10 @@ public class Query3 {
      * @throws InterruptedException
      * @throws ExecutionException
      */
-    public static SortedSet<ComparablePair<Double, String>> runQuery(Job<Neighbourhood, List<Tree>> job, long limit)
+    public static NavigableSet<ComparablePair<Double, String>> runQuery(Job<Neighbourhood, List<Tree>> job, long limit)
             throws InterruptedException, ExecutionException {
 
-        final JobCompletableFuture<SortedSet<ComparablePair<Double, String>>> future = job
+        final JobCompletableFuture<NavigableSet<ComparablePair<Double, String>>> future = job
                 .mapper(new NameDiameterMapper())
                 .reducer(new SumAvgReducerFactory<>())
                 .submit(new Query3Collator(limit));

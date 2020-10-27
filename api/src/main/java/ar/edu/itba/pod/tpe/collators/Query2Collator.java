@@ -6,6 +6,10 @@ import com.hazelcast.mapreduce.Collator;
 
 import java.util.*;
 
+/**
+ * Receives entries with Street, Long
+ * Returns Sorted Map of Comparable Pairs of each neighbourhood street with the most trees
+ */
 public class Query2Collator implements Collator<Map.Entry<Street, Long>, Map<String, ComparablePair<String, Long>>> {
     private final long min;
 
@@ -14,7 +18,7 @@ public class Query2Collator implements Collator<Map.Entry<Street, Long>, Map<Str
     }
 
     @Override
-    public Map<String, ComparablePair<String,Long>> collate(Iterable<Map.Entry<Street, Long>> iterable) {
+    public Map<String, ComparablePair<String, Long>> collate(Iterable<Map.Entry<Street, Long>> iterable) {
 
         Map<String, ComparablePair<String,Long>> out = new TreeMap<>(String::compareTo);
         iterable.forEach(e -> {

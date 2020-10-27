@@ -68,5 +68,4 @@ public class ClientUtils {
             System.err.println("Error while printing CSV file");
         }
     }
-
 }

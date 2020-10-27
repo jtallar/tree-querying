@@ -20,6 +20,13 @@ public class Query5Collator implements Collator<Map.Entry<Long, NavigableSet<Str
         return out;
     }
 
+    /**
+     * Recursive function to create all pairs for a given set
+     * @param out The set to save all the generated pairs
+     * @param key Key number, shared across all pairs
+     * @param first The first (ordered) neighbourhood of the set, make pairs with the rest
+     * @param set The rest of the neighbourhoods with the same key
+     */
     private static void addCombinations(SortedSet<ComparableTrio<Long, String, String>> out, Long key, String first, NavigableSet<String> set) {
         if (set.size() == 0) return;
         out.add(new ComparableTrio<>(key, first, set.first()));

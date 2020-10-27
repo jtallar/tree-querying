@@ -20,6 +20,7 @@ public class Query4Collator implements Collator<Map.Entry<String, Long>, SortedS
 
     @Override
     public SortedSet<ComparablePair<String, String>> collate(Iterable<Map.Entry<String, Long>> iterable) {
+
         Set<String> neighbourhoods = new HashSet<>();
         iterable.forEach(e -> { if (e.getValue() >= minCount) neighbourhoods.add(e.getKey()); });
 
@@ -28,4 +29,6 @@ public class Query4Collator implements Collator<Map.Entry<String, Long>, SortedS
 
         return out;
     }
+
+
 }
