@@ -21,16 +21,8 @@ public class Query2Collator implements
         Map<String, ComparablePair<String,Long>> out = new TreeMap<>(String::compareTo);
         iterable.forEach(e -> {
             if (e.getValue() < min) return;
-//            out.
-            String aux = e.getKey().getNeighbourhood();
-//            out.computeIfPresent(aux)
-            if(!out.containsKey(aux)) { // si no esta pongo
-                out.put(aux, new ComparablePair<>(e.getKey().getStreet(),e.getValue()));
-            } else if(out.get(aux).getSecond() < e.getValue()) { // si esta, me fijo si cantidad es mayor, en tal caso actualizo
-                out.get(aux).setSecond(e.getValue());
-                out.get(aux).setFirst(e.getKey().getStreet());
-            }
-
+            ComparablePair<String, Long> pair = new ComparablePair<>(e.getKey().getStreet(), e.getValue());
+            out.merge(e.getKey().getNeighbourhood(), pair, (prev, curr) -> (curr.getSecond() > prev.getSecond())? curr : prev);
         });
         return out;
     }

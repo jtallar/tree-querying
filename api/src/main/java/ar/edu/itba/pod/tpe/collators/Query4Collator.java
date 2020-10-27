@@ -26,7 +26,6 @@ public class Query4Collator implements Collator<Map.Entry<String, Long>, SortedS
         SortedSet<ComparablePair<String, String>> out = new TreeSet<>(ComparablePair::compareTo);
         neighbourhoods.forEach(f -> neighbourhoods.forEach(s -> { if (f.compareTo(s) < 0) out.add(new ComparablePair<>(f, s)); }));
 
-
         return out;
     }
 }
