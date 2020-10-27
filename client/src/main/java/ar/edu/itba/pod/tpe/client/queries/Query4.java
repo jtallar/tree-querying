@@ -21,7 +21,7 @@ import java.util.concurrent.ExecutionException;
 public class Query4 {
     private static final String QUERY_HEADER = "Barrio A;Barrio B";
 
-    public static void runQuery(Job<Neighbourhood, List<Tree>> job, String treeName, int minNumber, String outPath)
+    public static void runQuery(Job<Neighbourhood, List<Tree>> job, String treeName, long minNumber, String outPath)
             throws InterruptedException, ExecutionException {
         final JobCompletableFuture<SortedSet<ComparablePair<String, String>>> future = job
                 .mapper(new Query4Mapper(treeName))
@@ -36,7 +36,7 @@ public class Query4 {
     }
 
     // TODO: Integrar ambas, que solo se usa esta que devuelve y que tenga otra llamada para printear
-    public static SortedSet<ComparablePair<String, String>> runQueryTest(Job<Neighbourhood, List<Tree>> job, String treeName, int minNumber)
+    public static SortedSet<ComparablePair<String, String>> runQueryTest(Job<Neighbourhood, List<Tree>> job, String treeName, long minNumber)
             throws InterruptedException, ExecutionException {
         final JobCompletableFuture<SortedSet<ComparablePair<String, String>>> future = job
                 .mapper(new Query4Mapper(treeName))

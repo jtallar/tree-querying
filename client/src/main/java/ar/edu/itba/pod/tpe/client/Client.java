@@ -50,7 +50,7 @@ public class Client {
     private static City city;
     private static List<String> clusterAddresses = new ArrayList<>();
     private static String inPath, outPath;
-    private static int minNumber, limit;
+    private static long minNumber, limit;
     private static String treeName;
     private static Map<String, Long>  neighborhoods;
 
@@ -63,6 +63,7 @@ public class Client {
             return;
         }
 
+        // TODO: Esto no deberia ir aca, solo hacerlo si es query 1 o 2 (y dentro de los tiempos de lectura)
         try {
             neighborhoods = Parser.parseNeighbourhood(inPath, city);
         } catch (IOException e) {
@@ -82,6 +83,7 @@ public class Client {
         final IMap<Neighbourhood, List<Tree>> map = hz.getMap("g6-map-" + query);
         map.clear();
         logger.info("Inicio de la lectura del archivo");
+        System.out.println("Iniciando lectura del archivo de arboles...");
         try {
             map.putAll(Parser.parseTrees(inPath, city));
         } catch (IOException e) {
@@ -94,6 +96,7 @@ public class Client {
         final KeyValueSource<Neighbourhood, List<Tree>> source = KeyValueSource.fromMap(map);
         final Job<Neighbourhood, List<Tree>> job = jobTracker.newJob(source);
 
+        System.out.println("Iniciando trabajo de map/reduce para la " + query + "...");
         logger.info("Inicio del trabajo map/reduce");
         try {
             runQuery(job, jobTracker, hz);
@@ -134,22 +137,16 @@ public class Client {
         inPath = Optional.ofNullable(properties.getProperty(IN_PATH_PARAM)).orElseThrow(new ArgumentException("In path must be supplied using -DinPath"));
         outPath = Optional.ofNullable(properties.getProperty(OUT_PATH_PARAM)).orElseThrow(new ArgumentException("Out path must be supplied using -DoutPath"));
 
-//        try {
-//            minNumber = Integer.parseInt(properties.getProperty(MIN_PARAM));
-//            if (minNumber < 0) throw new NumberFormatException();
-//        } catch (NumberFormatException e) {
-//            throw new ArgumentException("min number must be supplied using -Dmin and it must be a positive or zero number");
-//        }
         try {
-            minNumber = Integer.parseInt(properties.getProperty(MIN_PARAM));
+            minNumber = Long.parseLong(properties.getProperty(MIN_PARAM));
             if (minNumber <= 0) throw new NumberFormatException(); // minNumber debe ser un entero positivo
         } catch (NumberFormatException e) {
             throw new ArgumentException("min number must be supplied using -Dmin and it must be a positive number (min > 0)");
         }
 
         try {
-            limit = Integer.parseInt(properties.getProperty(N_PARAM));
-            if (minNumber < 0) throw new NumberFormatException();
+            limit = Long.parseLong(properties.getProperty(N_PARAM));
+            if (limit <= 0) throw new NumberFormatException();
         } catch (NumberFormatException e) {
             throw new ArgumentException("n number must be supplied using -Dn and it must be a positive number");
         }

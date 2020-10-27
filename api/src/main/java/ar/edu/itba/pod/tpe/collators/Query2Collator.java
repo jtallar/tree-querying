@@ -9,9 +9,9 @@ import java.util.*;
 public class Query2Collator implements
         Collator<Map.Entry<TreeStreet,Long>,Map<String, ComparablePair<String,Long>>> {
 
-    private final int min;
+    private final long min;
 
-    public Query2Collator(int min) {
+    public Query2Collator(long min) {
         this.min = min;
     }
 

@@ -27,7 +27,7 @@ import java.util.concurrent.ExecutionException;
 public class Query3 {
     private static final String QUERY_HEADER = "NOMBRE_CIENTIFICO;PROMEDIO_DIAMETRO";
 
-    public static void runQuery(Job<Neighbourhood, List<Tree>> job, int limit, String outPath)
+    public static void runQuery(Job<Neighbourhood, List<Tree>> job, long limit, String outPath)
             throws InterruptedException, ExecutionException {
 
         final JobCompletableFuture<SortedSet<ComparablePair<String, Double>>> future = job
@@ -44,7 +44,7 @@ public class Query3 {
         ClientUtils.genericCSVPrinter4(outPath + "query3.csv", result, printQuery);
     }
 
-    public static SortedSet<ComparablePair<String, Double>> runQueryTest(Job<Neighbourhood, List<Tree>> job, int limit)
+    public static SortedSet<ComparablePair<String, Double>> runQueryTest(Job<Neighbourhood, List<Tree>> job, long limit)
             throws InterruptedException, ExecutionException {
         final JobCompletableFuture<SortedSet<ComparablePair<String, Double>>> future = job
                 .mapper(new Query3Mapper())

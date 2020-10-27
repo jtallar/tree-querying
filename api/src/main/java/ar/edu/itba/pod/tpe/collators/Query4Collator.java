@@ -12,9 +12,9 @@ import java.util.stream.Collectors;
  * Returns Sorted set of Comparable Pairs with cross join of this keys (k1 < k2)
  */
 public class Query4Collator implements Collator<Map.Entry<String, Long>, SortedSet<ComparablePair<String, String>>> {
-    private int minCount;
+    private long minCount;
 
-    public Query4Collator(int minCount) {
+    public Query4Collator(long minCount) {
         this.minCount = minCount;
     }
 

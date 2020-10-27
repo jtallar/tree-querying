@@ -21,7 +21,7 @@ import java.util.concurrent.ExecutionException;
 public class Query2 {
     private static final String QUERY_HEADER = "BARRIO;CALLE_CON_MAS_ARBOLES;ARBOLES";
 
-    public static void runQuery(Job<Neighbourhood, List<Tree>> job, Map<String, Long>  neigh, int minNumber, String outPath)
+    public static void runQuery(Job<Neighbourhood, List<Tree>> job, Map<String, Long>  neigh, long minNumber, String outPath)
             throws InterruptedException, ExecutionException {
 
         final JobCompletableFuture<Map<String,ComparablePair<String,Long>>> future = job
@@ -38,7 +38,7 @@ public class Query2 {
     }
 
     // TODO: Integrar ambas, que solo se usa esta que devuelve y que tenga otra llamada para printear
-    public static Map<String,ComparablePair<String,Long>> runQueryTest(Job<Neighbourhood, List<Tree>> job, Map<String, Long>  neigh, int minNumber)
+    public static Map<String,ComparablePair<String,Long>> runQueryTest(Job<Neighbourhood, List<Tree>> job, Map<String, Long>  neigh, long minNumber)
             throws InterruptedException, ExecutionException {
         final JobCompletableFuture<Map<String,ComparablePair<String,Long>>> future = job
                 .keyPredicate(new NeighbourhoodKeyPredicate(neigh))

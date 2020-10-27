@@ -13,9 +13,9 @@ import java.util.stream.Collectors;
  */
 public class Query3Collator implements Collator<Map.Entry<String, Double>, SortedSet<ComparablePair<String, Double>>> {
 
-    private final int limit;
+    private final long limit;
 
-    public Query3Collator(int limit) {
+    public Query3Collator(long limit) {
         this.limit = limit;
     }
 
