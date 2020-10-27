@@ -6,7 +6,7 @@ import ar.edu.itba.pod.tpe.collators.Query4Collator;
 import ar.edu.itba.pod.tpe.mappers.NeighbourhoodTreeFilteredMapper;
 import ar.edu.itba.pod.tpe.models.Neighbourhood;
 import ar.edu.itba.pod.tpe.models.Tree;
-import ar.edu.itba.pod.tpe.reducers.Query4ReducerFactory;
+import ar.edu.itba.pod.tpe.reducers.SumReducerFactory;
 import ar.edu.itba.pod.tpe.utils.ComparablePair;
 import com.hazelcast.mapreduce.Job;
 import com.hazelcast.mapreduce.JobCompletableFuture;
@@ -25,7 +25,7 @@ public class Query4 {
             throws InterruptedException, ExecutionException {
         final JobCompletableFuture<SortedSet<ComparablePair<String, String>>> future = job
                 .mapper(new NeighbourhoodTreeFilteredMapper(treeName))
-                .reducer(new Query4ReducerFactory())
+                .reducer(new SumReducerFactory<>())
                 .submit(new Query4Collator(minNumber));
 
         // Wait and retrieve result
@@ -40,7 +40,7 @@ public class Query4 {
             throws InterruptedException, ExecutionException {
         final JobCompletableFuture<SortedSet<ComparablePair<String, String>>> future = job
                 .mapper(new NeighbourhoodTreeFilteredMapper(treeName))
-                .reducer(new Query4ReducerFactory())
+                .reducer(new SumReducerFactory<>())
                 .submit(new Query4Collator(minNumber));
 
         // Wait and retrieve result

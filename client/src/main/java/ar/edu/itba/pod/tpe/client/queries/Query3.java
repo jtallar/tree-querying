@@ -6,7 +6,7 @@ import ar.edu.itba.pod.tpe.collators.Query3Collator;
 import ar.edu.itba.pod.tpe.mappers.NameDiameterMapper;
 import ar.edu.itba.pod.tpe.models.Neighbourhood;
 import ar.edu.itba.pod.tpe.models.Tree;
-import ar.edu.itba.pod.tpe.reducers.Query3ReducerFactory;
+import ar.edu.itba.pod.tpe.reducers.SumAvgReducerFactory;
 import ar.edu.itba.pod.tpe.utils.ComparablePair;
 import com.hazelcast.mapreduce.Job;
 import com.hazelcast.mapreduce.JobCompletableFuture;
@@ -28,14 +28,11 @@ public class Query3 {
 
         final JobCompletableFuture<SortedSet<ComparablePair<String, Double>>> future = job
                 .mapper(new NameDiameterMapper())
-                .reducer(new Query3ReducerFactory())
+                .reducer(new SumAvgReducerFactory<>())
                 .submit(new Query3Collator(limit));
 
         // Wait and retrieve result
         SortedSet<ComparablePair<String, Double>> result = future.get();
-//        System.out.println("Query 3");
-//        for(ComparablePair<String, Double> s : result)
-//            System.out.println("\nArbol: "+ s.getFirst() + "  Diametro: " + s.getSecond());
 
         ClientUtils.genericCSVPrinter4(outPath + "query3.csv", result, printQuery);
     }
@@ -44,7 +41,7 @@ public class Query3 {
             throws InterruptedException, ExecutionException {
         final JobCompletableFuture<SortedSet<ComparablePair<String, Double>>> future = job
                 .mapper(new NameDiameterMapper())
-                .reducer(new Query3ReducerFactory())
+                .reducer(new SumAvgReducerFactory<>())
                 .submit(new Query3Collator(limit));
 
         // Wait and retrieve result

@@ -7,7 +7,6 @@ import com.hazelcast.mapreduce.Mapper;
 
 import java.util.List;
 
-
 /**
  * Receives a tree name as a parameter in constructor. To be used as a condition.
  * Given a key-value pair, with the neighbourhood as key and a list of trees as value,

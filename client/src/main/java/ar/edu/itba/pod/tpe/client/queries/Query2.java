@@ -7,7 +7,7 @@ import ar.edu.itba.pod.tpe.keyPredicates.NeighbourhoodKeyPredicate;
 import ar.edu.itba.pod.tpe.mappers.StreetTreeMapper;
 import ar.edu.itba.pod.tpe.models.Neighbourhood;
 import ar.edu.itba.pod.tpe.models.Tree;
-import ar.edu.itba.pod.tpe.reducers.Query2Reducer;
+import ar.edu.itba.pod.tpe.reducers.SumReducerFactory;
 import ar.edu.itba.pod.tpe.utils.ComparablePair;
 import com.hazelcast.mapreduce.Job;
 import com.hazelcast.mapreduce.JobCompletableFuture;
@@ -27,7 +27,7 @@ public class Query2 {
         final JobCompletableFuture<Map<String,ComparablePair<String,Long>>> future = job
                 .keyPredicate(new NeighbourhoodKeyPredicate(neigh))
                 .mapper(new StreetTreeMapper())
-                .reducer(new Query2Reducer())
+                .reducer(new SumReducerFactory<>())
                 .submit(new Query2Collator(minNumber));
 
         // Wait and retrieve result
@@ -43,7 +43,7 @@ public class Query2 {
         final JobCompletableFuture<Map<String,ComparablePair<String,Long>>> future = job
                 .keyPredicate(new NeighbourhoodKeyPredicate(neigh))
                 .mapper(new StreetTreeMapper())
-                .reducer(new Query2Reducer())
+                .reducer(new SumReducerFactory<>())
                 .submit(new Query2Collator(minNumber));
 
         // Wait and retrieve result

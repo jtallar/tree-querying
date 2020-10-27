@@ -3,7 +3,7 @@ package ar.edu.itba.pod.tpe.client.queries;
 import ar.edu.itba.pod.tpe.mappers.NeighbourhoodTreeMapper;
 import ar.edu.itba.pod.tpe.models.Neighbourhood;
 import ar.edu.itba.pod.tpe.models.Tree;
-import ar.edu.itba.pod.tpe.reducers.Query5ReducerFactory;
+import ar.edu.itba.pod.tpe.reducers.SumReducerFactory;
 import com.hazelcast.mapreduce.Job;
 import com.hazelcast.mapreduce.JobCompletableFuture;
 
@@ -18,7 +18,7 @@ public class Query5 {
 
         final JobCompletableFuture<Map<String, Long>> future = job
                 .mapper(new NeighbourhoodTreeMapper())
-                .reducer(new Query5ReducerFactory())
+                .reducer(new SumReducerFactory<>(3))
                 .submit();
         return future.get();
     }
