@@ -1,6 +1,5 @@
 package ar.edu.itba.pod.tpe.client.queries;
 
-import ar.edu.itba.pod.tpe.client.utils.ClientUtils;
 import ar.edu.itba.pod.tpe.client.utils.ThrowableBiConsumer;
 import ar.edu.itba.pod.tpe.collators.Query3Collator;
 import ar.edu.itba.pod.tpe.mappers.NameDiameterMapper;
@@ -20,8 +19,19 @@ import java.util.Locale;
 import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
 
+/**
+ * Class with static methods dedicated to solve the Query 3
+ */
 public class Query3 {
 
+    /**
+     * Created the MapReduce with the corresponding classes
+     * @param job The job created from the IMap instance with neighbourhoods and list of trees
+     * @param limit The maximum value of results to show
+     * @return The sorted set returned with the resulting values of the MapReduce
+     * @throws InterruptedException
+     * @throws ExecutionException
+     */
     public static SortedSet<ComparablePair<Double, String>> runQuery(Job<Neighbourhood, List<Tree>> job, long limit)
             throws InterruptedException, ExecutionException {
 
@@ -32,8 +42,14 @@ public class Query3 {
         return future.get();
     }
 
+    /**
+     * CSV header for this specific query
+     */
     public static final String HEADER = "NOMBRE_CIENTIFICO;PROMEDIO_DIAMETRO";
 
+    /**
+     * Throwable consumer, printing method used for each value of the set
+     */
     public static final ThrowableBiConsumer<ComparablePair<Double, String>, CSVPrinter, IOException> print = (e, p) -> {
         DecimalFormat df = new DecimalFormat("#0.00", new DecimalFormatSymbols(Locale.ENGLISH));
         p.printRecord(e.getSecond(), df.format(e.getFirst()));

@@ -1,6 +1,5 @@
 package ar.edu.itba.pod.tpe.client.queries;
 
-import ar.edu.itba.pod.tpe.client.utils.ClientUtils;
 import ar.edu.itba.pod.tpe.client.utils.ThrowableBiConsumer;
 import ar.edu.itba.pod.tpe.collators.Query1Collator;
 import ar.edu.itba.pod.tpe.keyPredicates.NeighbourhoodKeyPredicate;
@@ -19,9 +18,19 @@ import java.text.DecimalFormatSymbols;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 
-
+/**
+ * Class with static methods dedicated to solve the Query 1
+ */
 public class Query1 {
 
+    /**
+     * Created the MapReduce with the corresponding classes
+     * @param job The job created from the IMap instance with neighbourhoods and list of trees
+     * @param neighbourhoods Map with valid neighbourhoods and their respective population
+     * @return The sorted set returned with the resulting values of the MapReduce
+     * @throws InterruptedException
+     * @throws ExecutionException
+     */
     public static Set<ComparablePair<Double, String>> runQuery(Job<Neighbourhood, List<Tree>> job, Map<String, Long> neighbourhoods)
             throws InterruptedException, ExecutionException  {
 
@@ -39,7 +48,7 @@ public class Query1 {
     public static final String HEADER = "GRUPO;ARBOLES_POR_HABITANTE";
 
     /**
-     * Throwable consumer, prints the result as needed by this query
+     * Throwable consumer, printing method used for each value of the set
      */
     public static final ThrowableBiConsumer<ComparablePair<Double, String>, CSVPrinter, IOException> print = (e, p) -> {
         DecimalFormat df = new DecimalFormat("#0.00", new DecimalFormatSymbols(Locale.ENGLISH));
