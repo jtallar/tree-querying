@@ -68,7 +68,7 @@ public class Client {
 
         final IList<Tree> list = hz.getList("g6-list-" + query);
         list.clear();
-        logger.info("Inicio de la lectura del archivo");
+        logger.info("Inicio de la lectura del archivo arboles");
         System.out.println("Iniciando lectura del archivo de arboles...");
         try {
             list.addAll(Parser.parseTrees(inPath, city));
@@ -77,7 +77,7 @@ public class Client {
             System.exit(ERROR_STATUS);
             return;
         }
-        logger.info("Fin de la lectura del archivo");
+        logger.info("Fin de la lectura del archivo arboles");
 
         System.out.println("Iniciando trabajo de map/reduce para la " + query + "...");
         logger.info("Inicio del trabajo map/reduce");
@@ -161,12 +161,19 @@ public class Client {
     private static void runQuery(Job<String, Tree> job, JobTracker jobTracker, HazelcastInstance hz)
             throws InterruptedException, ExecutionException, IOException {
 
+        final Map<String, Long> neighbourhoods;
         switch (query) {
             case "query1":
-                ClientUtils.genericSetCSVPrinter(outPath + query + ".csv", Query1.runQuery(job, Parser.parseNeighbourhood(inPath, city)), Query1.print, Query1.HEADER);
+                logger.info("Inicio de la lectura del archivo barrios");
+                neighbourhoods = Parser.parseNeighbourhood(inPath, city);
+                logger.info("Inicio de la lectura del archivo barrios");
+                ClientUtils.genericSetCSVPrinter(outPath + query + ".csv", Query1.runQuery(job, neighbourhoods), Query1.print, Query1.HEADER);
                 break;
             case "query2":
-                ClientUtils.genericMapCSVPrinter(outPath + query + ".csv", Query2.runQuery(job, Parser.parseNeighbourhood(inPath, city), minNumber), Query2.print, Query2.HEADER);
+                logger.info("Inicio de la lectura del archivo barrios");
+                neighbourhoods = Parser.parseNeighbourhood(inPath, city);
+                logger.info("Inicio de la lectura del archivo barrios");
+                ClientUtils.genericMapCSVPrinter(outPath + query + ".csv", Query2.runQuery(job, neighbourhoods, minNumber), Query2.print, Query2.HEADER);
                 break;
             case "query3":
                 ClientUtils.genericSetCSVPrinter(outPath + query + ".csv", Query3.runQuery(job, limit), Query3.print, Query3.HEADER);
