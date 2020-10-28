@@ -2,9 +2,7 @@ package ar.edu.itba.pod.tpe.client.queries;
 
 import ar.edu.itba.pod.tpe.client.utils.ThrowableBiConsumer;
 import ar.edu.itba.pod.tpe.collators.Query1Collator;
-import ar.edu.itba.pod.tpe.keyPredicates.NeighbourhoodKeyPredicate;
 import ar.edu.itba.pod.tpe.mappers.NeighbourhoodTreeMapper;
-import ar.edu.itba.pod.tpe.models.Neighbourhood;
 import ar.edu.itba.pod.tpe.models.Tree;
 import ar.edu.itba.pod.tpe.reducers.SumReducerFactory;
 import ar.edu.itba.pod.tpe.utils.ComparablePair;
@@ -34,10 +32,6 @@ public class Query1 {
      */
     public static NavigableSet<ComparablePair<Double, String>> runQuery(Job<String, Tree> job, Map<String, Long> neighbourhoods)
             throws InterruptedException, ExecutionException  {
-
-        final BiConsumer<Map.Entry<String, Long>, NavigableSet<ComparablePair<Double, String>>> collator = (e, s) -> {
-            s.add(new ComparablePair<>((double) e.getValue() / neighbourhoods.get(e.getKey()), e.getKey()));
-        };
 
         final JobCompletableFuture<NavigableSet<ComparablePair<Double, String>>> future = job
 //                .keyPredicate(new NeighbourhoodKeyPredicate(neighbourhoods))

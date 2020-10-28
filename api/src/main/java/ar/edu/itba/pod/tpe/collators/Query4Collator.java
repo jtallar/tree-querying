@@ -2,9 +2,7 @@ package ar.edu.itba.pod.tpe.collators;
 
 import ar.edu.itba.pod.tpe.utils.ComparablePair;
 import com.hazelcast.mapreduce.Collator;
-
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Receives entries with String, Long
