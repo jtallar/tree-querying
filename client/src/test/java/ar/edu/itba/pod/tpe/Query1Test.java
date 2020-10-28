@@ -59,7 +59,7 @@ public class Query1Test {
 
         // Run Query
         final Set<ComparablePair<Double, String>> result =
-                Query1.runQueryTest(jobTracker.newJob(KeyValueSource.fromMap(hzMap)), neigh);
+                Query1.runQuery(jobTracker.newJob(KeyValueSource.fromMap(hzMap)), neigh);
 
         // Assertions
         assertEquals(0, result.size());
@@ -86,7 +86,7 @@ public class Query1Test {
 
         // Run Query
         final Set<ComparablePair<Double, String>> result =
-                Query1.runQueryTest(jobTracker.newJob(KeyValueSource.fromMap(hzMap)), neigh);
+                Query1.runQuery(jobTracker.newJob(KeyValueSource.fromMap(hzMap)), neigh);
 
         // Assertions
         assertEquals(0, result.size());
@@ -113,7 +113,7 @@ public class Query1Test {
 
         // Run Query
         final Set<ComparablePair<Double, String>> result =
-                Query1.runQueryTest(jobTracker.newJob(KeyValueSource.fromMap(hzMap)), neigh);
+                Query1.runQuery(jobTracker.newJob(KeyValueSource.fromMap(hzMap)), neigh);
 
         // Assertions
         assertEquals(1, result.size());
@@ -151,7 +151,7 @@ public class Query1Test {
 
         // Run Query
         final Set<ComparablePair<Double, String>> result =
-                Query1.runQueryTest(jobTracker.newJob(KeyValueSource.fromMap(hzMap)), neigh);
+                Query1.runQuery(jobTracker.newJob(KeyValueSource.fromMap(hzMap)), neigh);
 
         int i = 0;
         for (ComparablePair pair : result)
@@ -193,7 +193,7 @@ public class Query1Test {
 
         // Run Query
         final Set<ComparablePair<Double, String>> result =
-                Query1.runQueryTest(jobTracker.newJob(KeyValueSource.fromMap(hzMap)), neigh);
+                Query1.runQuery(jobTracker.newJob(KeyValueSource.fromMap(hzMap)), neigh);
 
         int i = 0;
         for (ComparablePair pair : result)
