@@ -21,6 +21,7 @@ import java.util.function.BiConsumer;
 /**
  * Class with static methods dedicated to solve the Query 3
  */
+//  TODO: Estamos redondeando, no truncando
 public class Query3 {
 
     /**

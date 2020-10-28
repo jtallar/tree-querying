@@ -20,6 +20,10 @@ import java.util.function.BiConsumer;
 /**
  * Class with static methods dedicated to solve the Query 1
  */
+// TODO: deberia listar los barrios con 0 arboles por habitante? Es decir, no tienen arboles en arboles.csv,
+//    pero aparecen en barrios.csv
+
+//  TODO: Estamos redondeando, no truncando
 public class Query1 {
 
     /**

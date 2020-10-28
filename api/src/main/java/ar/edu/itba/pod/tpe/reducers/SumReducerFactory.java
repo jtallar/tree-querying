@@ -40,7 +40,7 @@ public class SumReducerFactory<T> implements ReducerFactory<T, Long, Long> {
 
         @Override
         public Long finalizeReduce() {
-            return sum - (digits > 0 ? sum % (10 ^ digits) : 0);
+            return sum - (digits > 0 ? sum % (long) (Math.pow(10, digits)) : 0);
         }
     }
 }
