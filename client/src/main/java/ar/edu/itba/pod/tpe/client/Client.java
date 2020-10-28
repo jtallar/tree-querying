@@ -166,13 +166,13 @@ public class Client {
             case "query1":
                 logger.info("Inicio de la lectura del archivo barrios");
                 neighbourhoods = Parser.parseNeighbourhood(inPath, city);
-                logger.info("Inicio de la lectura del archivo barrios");
+                logger.info("Fin de la lectura del archivo barrios");
                 ClientUtils.genericSetCSVPrinter(outPath + query + ".csv", Query1.runQuery(job, neighbourhoods), Query1.print, Query1.HEADER);
                 break;
             case "query2":
                 logger.info("Inicio de la lectura del archivo barrios");
                 neighbourhoods = Parser.parseNeighbourhood(inPath, city);
-                logger.info("Inicio de la lectura del archivo barrios");
+                logger.info("Fin de la lectura del archivo barrios");
                 ClientUtils.genericMapCSVPrinter(outPath + query + ".csv", Query2.runQuery(job, neighbourhoods, minNumber), Query2.print, Query2.HEADER);
                 break;
             case "query3":
