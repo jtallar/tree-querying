@@ -32,7 +32,7 @@ public class Query1 {
      * @throws InterruptedException
      * @throws ExecutionException
      */
-    public static NavigableSet<ComparablePair<Double, String>> runQuery(Job<Neighbourhood, List<Tree>> job, Map<String, Long> neighbourhoods)
+    public static NavigableSet<ComparablePair<Double, String>> runQuery(Job<String, Tree> job, Map<String, Long> neighbourhoods)
             throws InterruptedException, ExecutionException  {
 
         final BiConsumer<Map.Entry<String, Long>, NavigableSet<ComparablePair<Double, String>>> collator = (e, s) -> {

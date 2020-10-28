@@ -12,11 +12,16 @@ import java.util.List;
  * emits the diameter for each tree, with its common name as the key.
  * The processing is made in parallel to make it faster, as the order has no relevance.
  */
-public class NameDiameterMapper implements Mapper<Neighbourhood, List<Tree>, String, Double> {
+public class NameDiameterMapper implements Mapper<String, Tree, String, Double> {
     private static final long serialVersionUID = 3909833743234320270L;
 
+//    @Override
+//    public void map(Neighbourhood neighbourhood, List<Tree> trees, Context<String, Double> context) {
+//        trees.parallelStream().forEach(t -> context.emit(t.getCommonName(), t.getDiameter()));
+//    }
+
     @Override
-    public void map(Neighbourhood neighbourhood, List<Tree> trees, Context<String, Double> context) {
-        trees.parallelStream().forEach(t -> context.emit(t.getCommonName(), t.getDiameter()));
+    public void map(String s, Tree tree, Context<String, Double> context) {
+        context.emit(tree.getCommonName(), tree.getDiameter());
     }
 }

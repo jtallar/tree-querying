@@ -31,7 +31,7 @@ public class Query2 {
      * @throws InterruptedException
      * @throws ExecutionException
      */
-    public static Map<String,ComparablePair<String,Long>> runQuery(Job<Neighbourhood, List<Tree>> job, Map<String, Long>  neighbourhoods, long min)
+    public static Map<String,ComparablePair<String,Long>> runQuery(Job<String, Tree> job, Map<String, Long>  neighbourhoods, long min)
             throws InterruptedException, ExecutionException {
 
         final JobCompletableFuture<Map<String,ComparablePair<String,Long>>> future = job

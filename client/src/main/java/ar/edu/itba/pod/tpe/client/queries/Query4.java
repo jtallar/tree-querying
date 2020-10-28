@@ -30,7 +30,7 @@ public class Query4 {
      * @throws InterruptedException
      * @throws ExecutionException
      */
-    public static SortedSet<ComparablePair<String, String>> runQuery(Job<Neighbourhood, List<Tree>> job, String treeName, long min)
+    public static SortedSet<ComparablePair<String, String>> runQuery(Job<String, Tree> job, String treeName, long min)
             throws InterruptedException, ExecutionException {
 
         final JobCompletableFuture<SortedSet<ComparablePair<String, String>>> future = job

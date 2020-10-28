@@ -14,6 +14,7 @@ import ar.edu.itba.pod.tpe.models.Tree;
 import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.client.config.ClientConfig;
 import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.IList;
 import com.hazelcast.core.IMap;
 import com.hazelcast.mapreduce.Job;
 import com.hazelcast.mapreduce.JobTracker;
@@ -65,12 +66,12 @@ public class Client {
 
         JobTracker jobTracker = hz.getJobTracker("g6-job-" + query);
 
-        final IMap<Neighbourhood, List<Tree>> map = hz.getMap("g6-map-" + query);
-        map.clear();
+        final IList<Tree> list = hz.getList("g6-list-" + query);
+        list.clear();
         logger.info("Inicio de la lectura del archivo");
         System.out.println("Iniciando lectura del archivo de arboles...");
         try {
-            map.putAll(Parser.parseTrees(inPath, city));
+            list.addAll(Parser.parseTrees(inPath, city));
         } catch (IOException e) {
             System.err.println("Could not read trees file from directory " + inPath);
             System.exit(ERROR_STATUS);
@@ -80,8 +81,8 @@ public class Client {
 
         System.out.println("Iniciando trabajo de map/reduce para la " + query + "...");
         logger.info("Inicio del trabajo map/reduce");
-        final KeyValueSource<Neighbourhood, List<Tree>> source = KeyValueSource.fromMap(map);
-        final Job<Neighbourhood, List<Tree>> job = jobTracker.newJob(source);
+        final KeyValueSource<String, Tree> source = KeyValueSource.fromList(list);
+        final Job<String, Tree> job = jobTracker.newJob(source);
         try {
             runQuery(job, jobTracker, hz);
         } catch (InterruptedException | ExecutionException e) {
@@ -157,7 +158,7 @@ public class Client {
         return config;
     }
 
-    private static void runQuery(Job<Neighbourhood, List<Tree>> job, JobTracker jobTracker, HazelcastInstance hz)
+    private static void runQuery(Job<String, Tree> job, JobTracker jobTracker, HazelcastInstance hz)
             throws InterruptedException, ExecutionException, IOException {
 
         switch (query) {

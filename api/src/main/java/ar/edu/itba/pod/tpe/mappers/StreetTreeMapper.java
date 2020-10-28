@@ -13,12 +13,17 @@ import java.util.List;
  * emits a 1 (one) for each tree, with its street as a key.
  * The processing is made in parallel to make it faster, as the order has no relevance.
  */
-public class StreetTreeMapper implements Mapper<Neighbourhood, List<Tree>, Street,Long> {
+public class StreetTreeMapper implements Mapper<String, Tree, Street,Long> {
     private static final long serialVersionUID = 5186107447712636552L;
     private static final Long ONE = 1L;
 
+//    @Override
+//    public void map(Neighbourhood neighbourhood, List<Tree> trees, Context<Street, Long> context) {
+//        trees.parallelStream().forEach(t -> context.emit(new Street(neighbourhood.getName(), t.getStreetName()), ONE));
+//    }
+
     @Override
-    public void map(Neighbourhood neighbourhood, List<Tree> trees, Context<Street, Long> context) {
-        trees.parallelStream().forEach(t -> context.emit(new Street(neighbourhood.getName(), t.getStreetName()), ONE));
+    public void map(String s, Tree tree, Context<Street, Long> context) {
+        context.emit(new Street(tree.getNeighbourhoodName(), tree.getStreetName()), ONE);
     }
 }

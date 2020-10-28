@@ -13,7 +13,7 @@ import java.util.List;
  * emits a 1 (one) for each tree meeting the condition, with its neighbourhood as a key.
  * The processing is made in parallel to make it faster, as the order has no relevance.
  */
-public class NeighbourhoodTreeFilteredMapper implements Mapper<Neighbourhood, List<Tree>, String, Long> {
+public class NeighbourhoodTreeFilteredMapper implements Mapper<String, Tree, String, Long> {
     private static final long serialVersionUID = 1909833743234320270L;
     private static final Long ONE = 1L;
     private final String treeName;
@@ -22,9 +22,16 @@ public class NeighbourhoodTreeFilteredMapper implements Mapper<Neighbourhood, Li
         this.treeName = treeName;
     }
 
+//    @Override
+//    public void map(Neighbourhood neighbourhood, List<Tree> trees, Context<String, Long> context) {
+//        trees.parallelStream().filter(t -> treeName.equals(t.getCommonName()))
+//                .parallel().forEach(t -> context.emit(neighbourhood.getName(), ONE));
+//    }
+
     @Override
-    public void map(Neighbourhood neighbourhood, List<Tree> trees, Context<String, Long> context) {
-        trees.parallelStream().filter(t -> treeName.equals(t.getCommonName()))
-                .parallel().forEach(t -> context.emit(neighbourhood.getName(), ONE));
+    public void map(String s, Tree tree, Context<String, Long> context) {
+        if (treeName.equals(tree.getCommonName())) {
+            context.emit(tree.getNeighbourhoodName(), ONE);
+        }
     }
 }
