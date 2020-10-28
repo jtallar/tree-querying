@@ -22,7 +22,7 @@ public class Query2Collator implements Collator<Map.Entry<Street, Long>, Map<Str
 
         Map<String, ComparablePair<String,Long>> out = new TreeMap<>(String::compareTo);
         iterable.forEach(e -> {
-            if (e.getValue() < min) return;
+            if (e.getValue() <= min) return;
             ComparablePair<String, Long> pair = new ComparablePair<>(e.getKey().getStreet(), e.getValue());
             out.merge(e.getKey().getNeighbourhood(), pair, (prev, curr) -> (curr.getSecond() > prev.getSecond())? curr : prev);
         });
