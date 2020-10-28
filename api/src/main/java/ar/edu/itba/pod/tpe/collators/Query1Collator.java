@@ -21,9 +21,9 @@ public class Query1Collator implements Collator<Map.Entry<String, Long>, Navigab
 
         NavigableSet<ComparablePair<Double, String>> out = new TreeSet<>(ComparablePair::compareToModified);
         iterable.forEach(e -> {
-            if (neighborhoods.containsKey(e.getKey())) {
+//            if (neighborhoods.containsKey(e.getKey())) {
                 out.add(new ComparablePair<>((double) e.getValue() / neighborhoods.get(e.getKey()), e.getKey()));
-            }
+//            }
         });
         return out;
     }

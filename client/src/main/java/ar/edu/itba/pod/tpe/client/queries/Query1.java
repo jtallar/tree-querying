@@ -41,7 +41,7 @@ public class Query1 {
 
         final JobCompletableFuture<NavigableSet<ComparablePair<Double, String>>> future = job
 //                .keyPredicate(new NeighbourhoodKeyPredicate(neighbourhoods))
-                .mapper(new NeighbourhoodTreeMapper())
+                .mapper(new NeighbourhoodTreeMapper(neighbourhoods))
                 .reducer(new SumReducerFactory<>())
                 .submit(new Query1Collator(neighbourhoods));
         return future.get();
@@ -50,7 +50,7 @@ public class Query1 {
     /**
      * CSV header for this specific query
      */
-    public static final String HEADER = "GRUPO;ARBOLES_POR_HABITANTE";
+    public static final String HEADER = "BARRIO;ARBOLES_POR_HABITANTE";
 
     /**
      * Throwable consumer, printing method used for each value of the set
