@@ -12,6 +12,7 @@ import com.hazelcast.mapreduce.JobCompletableFuture;
 import org.apache.commons.csv.CSVPrinter;
 
 import java.io.IOException;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.*;
@@ -21,7 +22,6 @@ import java.util.function.BiConsumer;
 /**
  * Class with static methods dedicated to solve the Query 3
  */
-//  TODO: Estamos redondeando, no truncando
 public class Query3 {
 
     /**
@@ -52,6 +52,7 @@ public class Query3 {
      */
     public static final ThrowableBiConsumer<ComparablePair<Double, String>, CSVPrinter, IOException> print = (e, p) -> {
         DecimalFormat df = new DecimalFormat("#0.00", new DecimalFormatSymbols(Locale.ENGLISH));
+        df.setRoundingMode(RoundingMode.DOWN);
         p.printRecord(e.getSecond(), df.format(e.getFirst()));
     };
 }

@@ -11,6 +11,7 @@ import com.hazelcast.mapreduce.JobCompletableFuture;
 import org.apache.commons.csv.CSVPrinter;
 
 import java.io.IOException;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.*;
@@ -22,8 +23,6 @@ import java.util.function.BiConsumer;
  */
 // TODO: deberia listar los barrios con 0 arboles por habitante? Es decir, no tienen arboles en arboles.csv,
 //    pero aparecen en barrios.csv
-
-//  TODO: Estamos redondeando, no truncando
 public class Query1 {
 
     /**
@@ -55,6 +54,7 @@ public class Query1 {
      */
     public static final ThrowableBiConsumer<ComparablePair<Double, String>, CSVPrinter, IOException> print = (e, p) -> {
         DecimalFormat df = new DecimalFormat("#0.00", new DecimalFormatSymbols(Locale.ENGLISH));
+        df.setRoundingMode(RoundingMode.DOWN);
         p.printRecord(e.getSecond(), df.format(e.getFirst()));
     };
 }
