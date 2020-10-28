@@ -1,6 +1,12 @@
 package ar.edu.itba.pod.tpe.utils;
 
-public class ComparablePair<F extends Comparable<F>, S extends Comparable<S>> implements Comparable<ComparablePair<F, S>> {
+/**
+ * Comparable Pair. A pair which can be sorted.
+ * @param <F> The first object, extends comparable.
+ * @param <S> The second object, who also extends from comparable.
+ */
+public class ComparablePair<F extends Comparable<F>, S extends Comparable<S>>
+        implements Comparable<ComparablePair<F, S>> {
     private F first;
     private S second;
 
@@ -15,6 +21,8 @@ public class ComparablePair<F extends Comparable<F>, S extends Comparable<S>> im
         this.second = second;
     }
 
+    /** Getters */
+
     public F getFirst() {
         return first;
     }
@@ -22,6 +30,8 @@ public class ComparablePair<F extends Comparable<F>, S extends Comparable<S>> im
     public S getSecond() {
         return second;
     }
+
+    /** Setters */
 
     public void setFirst(F first) {
         this.first = first;
@@ -34,7 +44,6 @@ public class ComparablePair<F extends Comparable<F>, S extends Comparable<S>> im
     /**
      * Checks the two objects for equality by delegating to their respective
      * {@link Object#equals(Object)} methods.
-     *
      * @param o the {@link ComparablePair} to which this one is to be checked for equality
      * @return true if the underlying objects of the ComparablePair are both considered
      *         equal
@@ -44,12 +53,12 @@ public class ComparablePair<F extends Comparable<F>, S extends Comparable<S>> im
         if (this == o) return true;
         if (!(o instanceof ComparablePair)) return false;
         ComparablePair<?, ?> p = (ComparablePair<?, ?>) o;
-        return first.equals(p.first) && second.equals(p.second);
+        return first.equals(p.first) &&
+                second.equals(p.second);
     }
 
     /**
      * Compute a hash code using the hash codes of the underlying objects
-     *
      * @return a hashcode of the ComparablePair
      */
     @Override
@@ -57,17 +66,32 @@ public class ComparablePair<F extends Comparable<F>, S extends Comparable<S>> im
         return (first == null ? 0 : first.hashCode()) ^ (second == null ? 0 : second.hashCode());
     }
 
+    /**
+     * Compares this object with the specified object for order.
+     * @return a negative integer, zero, or a positive integer as this object is less
+     * than, equal to, or greater than the specified object.
+     */
     @Override
     public int compareTo(ComparablePair<F, S> o) {
         int c = first.compareTo(o.first);
         return (c != 0) ? c : second.compareTo(o.second);
     }
 
+    /**
+     * Compares this object with the specified object for order.
+     * It inverts the order of the first field.
+     * @return a negative integer, zero, or a positive integer as this object is greater
+     * than, equal to, or less than the specified object.
+     */
     public int compareToModified(ComparablePair<F, S> o) {
         int c = first.compareTo(o.first) * (-1);
         return (c != 0) ? c : second.compareTo(o.second);
     }
 
+    /**
+     * Simply overrides the string printing for this class
+     * @return the resulting print string
+     */
     @Override
     public String toString() {
         return "ComparablePair{" +

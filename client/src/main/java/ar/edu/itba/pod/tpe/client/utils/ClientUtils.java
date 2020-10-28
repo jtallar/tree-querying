@@ -1,7 +1,5 @@
 package ar.edu.itba.pod.tpe.client.utils;
 
-import ar.edu.itba.pod.tpe.utils.ComparablePair;
-import ar.edu.itba.pod.tpe.utils.ComparableTrio;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 
@@ -10,12 +8,15 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Map;
-import java.util.NavigableSet;
-import java.util.Set;
-import java.util.SortedSet;
+import java.util.*;
 
 public class ClientUtils {
+    /**
+     * Gets the Inet Address form a String
+     * @param hostPort The string to be parsed
+     * @return The parsed Inet Socket Address
+     * @throws URISyntaxException
+     */
     public static InetSocketAddress getInetAddress(String hostPort) throws URISyntaxException {
         if (hostPort == null) throw new URISyntaxException("", "URI can't be null");
         URI uri = new URI("my://" + hostPort);
@@ -30,15 +31,19 @@ public class ClientUtils {
      * @param file File path for the csv printer.
      * @param result Result from the service response.
      * @param printFunction Print function to be applied.
+     * @param header The CSV header to be printed.
      */
-    public static void genericCSVPrinter(String file, SortedSet<ComparablePair<String, String>> result, ThrowableBiConsumer<SortedSet<ComparablePair<String, String>>, CSVPrinter, IOException> printFunction) {
-        try (final CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(file), CSVFormat.newFormat(';')
-                .withRecordSeparator('\n'))) {
+    public static <K, V, S extends Map<K, V>> void genericMapCSVPrinter(String file, S result, ThrowableBiConsumer<Map.Entry<K, V>, CSVPrinter, IOException> printFunction, String header) {
+        try (final CSVPrinter csvPrinter =
+                     new CSVPrinter(new FileWriter(file), CSVFormat.newFormat(';').withRecordSeparator('\n'))) {
 
-            // Applies function to result and writes on the csv
-            printFunction.accept(result, csvPrinter);
+            /** prints csv header */
+            csvPrinter.printRecord(header);
 
-            // Closes the csv printer
+            /** iterates over the entry set and accepts print function */
+            for (Map.Entry<K, V> e : result.entrySet()) printFunction.accept(e, csvPrinter);
+
+            /** closes the csv printer */
             csvPrinter.flush();
         } catch (IOException e){
             System.err.println("Error while printing CSV file");
@@ -50,73 +55,19 @@ public class ClientUtils {
      * @param file File path for the csv printer.
      * @param result Result from the service response.
      * @param printFunction Print function to be applied.
+     * @param header The CSV header to be printed.
      */
-    public static void genericCSVPrinter4(String file, SortedSet<ComparablePair<String, Double>> result, ThrowableBiConsumer<SortedSet<ComparablePair<String, Double>>, CSVPrinter, IOException> printFunction) {
-        try (final CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(file), CSVFormat.newFormat(';')
-                .withRecordSeparator('\n'))) {
+    public static <R, S extends Set<R>> void genericSetCSVPrinter(String file, S result, ThrowableBiConsumer<R, CSVPrinter, IOException> printFunction, String header) {
+        try (final CSVPrinter csvPrinter =
+                     new CSVPrinter(new FileWriter(file), CSVFormat.newFormat(';').withRecordSeparator('\n'))) {
 
-            // Applies function to result and writes on the csv
-            printFunction.accept(result, csvPrinter);
+            /** prints csv header */
+            csvPrinter.printRecord(header);
 
-            // Closes the csv printer
-            csvPrinter.flush();
-        } catch (IOException e){
-            System.err.println("Error while printing CSV file");
-        }
-    }
+            /** iterates over the set and accepts print function */
+            for (R r : result) printFunction.accept(r, csvPrinter);
 
-
-    // TODO esto despues mejorarlo, ver de hacer generico
-
-    /**
-     * Opens the csv printer, executes the printing function, and closes the printer.
-     * @param file File path for the csv printer.
-     * @param result Result from the service response.
-     * @param printFunction Print function to be applied.
-     */
-    public static void genericCSVPrinter2(String file, Set<ComparablePair<Double, String>> result, ThrowableBiConsumer<Set<ComparablePair<Double, String>>, CSVPrinter, IOException> printFunction) {
-        try (final CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(file), CSVFormat.newFormat(';')
-                .withRecordSeparator('\n'))) {
-
-            // Applies function to result and writes on the csv
-            printFunction.accept(result, csvPrinter);
-
-            // Closes the csv printer
-            csvPrinter.flush();
-        } catch (IOException e){
-            System.err.println("Error while printing CSV file");
-        }
-    }
-
-    /**
-     * Opens the csv printer, executes the printing function, and closes the printer.
-     * @param file File path for the csv printer.
-     * @param result Result from the service response.
-     * @param printFunction Print function to be applied.
-     */
-    public static void genericCSVPrinter3(String file, SortedSet<ComparableTrio<Long, String, String>> result, ThrowableBiConsumer<SortedSet<ComparableTrio<Long, String, String>>, CSVPrinter, IOException> printFunction) {
-        try (final CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(file), CSVFormat.newFormat(';')
-                .withRecordSeparator('\n'))) {
-
-            // Applies function to result and writes on the csv
-            printFunction.accept(result, csvPrinter);
-
-            // Closes the csv printer
-            csvPrinter.flush();
-        } catch (IOException e){
-            System.err.println("Error while printing CSV file");
-        }
-    }
-
-
-    public static void mapSVPrinter(String file, Map<String,ComparablePair<String,Long>> result, ThrowableBiConsumer< Map<String,ComparablePair<String,Long>>, CSVPrinter, IOException> printFunction) {
-        try (final CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(file), CSVFormat.newFormat(';')
-                .withRecordSeparator('\n'))) {
-
-            // Applies function to result and writes on the csv
-            printFunction.accept(result, csvPrinter);
-
-            // Closes the csv printer
+            /** closes the csv printer */
             csvPrinter.flush();
         } catch (IOException e){
             System.err.println("Error while printing CSV file");

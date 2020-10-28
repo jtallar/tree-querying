@@ -6,7 +6,7 @@ import ar.edu.itba.pod.tpe.client.queries.Query1;
 import ar.edu.itba.pod.tpe.client.queries.Query3;
 import ar.edu.itba.pod.tpe.client.queries.Query4;
 import ar.edu.itba.pod.tpe.client.queries.Query5;
-import ar.edu.itba.pod.tpe.client.queries.Query5B;
+import ar.edu.itba.pod.tpe.client.utils.City;
 import ar.edu.itba.pod.tpe.client.utils.ClientUtils;
 import ar.edu.itba.pod.tpe.client.utils.Parser;
 import ar.edu.itba.pod.tpe.models.Neighbourhood;
@@ -21,7 +21,6 @@ import com.hazelcast.mapreduce.KeyValueSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.management.Query;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.*;
@@ -52,21 +51,11 @@ public class Client {
     private static String inPath, outPath;
     private static long minNumber, limit;
     private static String treeName;
-    private static Map<String, Long>  neighborhoods;
 
     public static void main(String[] args) {
         try {
             argumentParsing();
         } catch (ArgumentException e) {
-            System.err.println(e.getMessage());
-            System.exit(ERROR_STATUS);
-            return;
-        }
-
-        // TODO: Esto no deberia ir aca, solo hacerlo si es query 1 o 2 (y dentro de los tiempos de lectura)
-        try {
-            neighborhoods = Parser.parseNeighbourhood(inPath, city);
-        } catch (IOException e) {
             System.err.println(e.getMessage());
             System.exit(ERROR_STATUS);
             return;
@@ -102,6 +91,10 @@ public class Client {
             runQuery(job, jobTracker, hz);
         } catch (InterruptedException | ExecutionException e) {
             System.err.println("Future execution interrupted. Exiting...");
+            System.exit(ERROR_STATUS);
+            return;
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
             System.exit(ERROR_STATUS);
             return;
         }
@@ -156,30 +149,23 @@ public class Client {
 
     // TODO: VER COMO HACER ESTO DE MANERA MAS PROLIJA
     private static void runQuery(Job<Neighbourhood, List<Tree>> job, JobTracker jobTracker, HazelcastInstance hz)
-            throws InterruptedException, ExecutionException {
+            throws InterruptedException, ExecutionException, IOException {
 
         switch (query) {
             case "query1":
-                Query1.runQuery(job, neighborhoods, outPath);
+                ClientUtils.genericSetCSVPrinter(outPath + query + ".csv", Query1.runQuery(job, Parser.parseNeighbourhood(inPath, city)), Query1.print, Query1.HEADER);
                 break;
             case "query2":
-                Query2.runQuery(job,neighborhoods,minNumber,outPath);
+                ClientUtils.genericMapCSVPrinter(outPath + query + ".csv", Query2.runQuery(job, Parser.parseNeighbourhood(inPath, city), minNumber), Query2.print, Query2.HEADER);
                 break;
             case "query3":
-                Query3.runQuery(job, limit, outPath);
+                ClientUtils.genericSetCSVPrinter(outPath + query + ".csv", Query3.runQuery(job, limit), Query3.print, Query3.HEADER);
                 break;
             case "query4":
-                Query4.runQuery(job, treeName, minNumber, outPath);
+                ClientUtils.genericSetCSVPrinter(outPath + query + ".csv", Query4.runQuery(job, treeName, minNumber), Query4.print, Query4.HEADER);
                 break;
             case "query5":
-                final Map<String, Long> result = Query5.runQuery(job);
-                final IMap<String, Long> map = hz.getMap("g6-map-" + query + "-aux");
-                map.clear();
-                map.putAll(result);
-
-                final KeyValueSource<String, Long> source = KeyValueSource.fromMap(map);
-                final Job<String, Long> secondJob = jobTracker.newJob(source);
-                Query5B.runQuery(secondJob, outPath);
+                ClientUtils.genericSetCSVPrinter(outPath + query + ".csv", Query5.runQuery(job, jobTracker, hz), Query5.print, Query5.HEADER);
                 break;
             default:
                 break;

@@ -62,7 +62,7 @@ public class Query2Test {
 
         // Run Query
         final Map<String,ComparablePair<String,Long>> result =
-                Query2.runQueryTest(jobTracker.newJob(KeyValueSource.fromMap(hzMap)), neigh, 1);
+                Query2.runQuery(jobTracker.newJob(KeyValueSource.fromMap(hzMap)), neigh, 1);
 
         // Assertions
         assertEquals(0, result.size());
@@ -90,7 +90,7 @@ public class Query2Test {
 
         // Run Query
         final Map<String,ComparablePair<String,Long>> result =
-                Query2.runQueryTest(jobTracker.newJob(KeyValueSource.fromMap(hzMap)), neigh, 1);
+                Query2.runQuery(jobTracker.newJob(KeyValueSource.fromMap(hzMap)), neigh, 1);
 
         // Assertions
         assertEquals(0, result.size());
@@ -117,7 +117,7 @@ public class Query2Test {
 
         // Run Query
         final Map<String,ComparablePair<String,Long>> result =
-                Query2.runQueryTest(jobTracker.newJob(KeyValueSource.fromMap(hzMap)), neigh, 1);
+                Query2.runQuery(jobTracker.newJob(KeyValueSource.fromMap(hzMap)), neigh, 1);
 
         // Assertions
         assertEquals(1, result.size());
@@ -150,7 +150,7 @@ public class Query2Test {
 
         // Run Query
         final Map<String,ComparablePair<String,Long>> result =
-                Query2.runQueryTest(jobTracker.newJob(KeyValueSource.fromMap(hzMap)), neigh, 1);
+                Query2.runQuery(jobTracker.newJob(KeyValueSource.fromMap(hzMap)), neigh, 1);
 
         // Assertions
         assertEquals(TREES_QTY, result.size());
@@ -182,7 +182,7 @@ public class Query2Test {
 
         // Run Query
         final Map<String,ComparablePair<String,Long>> result =
-                Query2.runQueryTest(jobTracker.newJob(KeyValueSource.fromMap(hzMap)), neigh, 4);
+                Query2.runQuery(jobTracker.newJob(KeyValueSource.fromMap(hzMap)), neigh, 4);
 
         // Assertions
         assertEquals(0, result.size());

@@ -56,7 +56,7 @@ public class Query4Test {
     public void testNoTrees() throws ExecutionException, InterruptedException {
         // Run Query
         final SortedSet<ComparablePair<String, String>> result =
-                Query4.runQueryTest(jobTracker.newJob(KeyValueSource.fromMap(hzMap)), TREE_NAME, 1);
+                Query4.runQuery(jobTracker.newJob(KeyValueSource.fromMap(hzMap)), TREE_NAME, 1);
 
         // Assertions
         assertEquals(0, result.size());
@@ -78,7 +78,7 @@ public class Query4Test {
 
         // Run Query
         final SortedSet<ComparablePair<String, String>> result =
-                Query4.runQueryTest(jobTracker.newJob(KeyValueSource.fromMap(hzMap)), THIRD_TREE_NAME, 1);
+                Query4.runQuery(jobTracker.newJob(KeyValueSource.fromMap(hzMap)), THIRD_TREE_NAME, 1);
 
         // Assertions
         assertEquals(0, result.size());
@@ -100,7 +100,7 @@ public class Query4Test {
 
         // Run Query
         final SortedSet<ComparablePair<String, String>> result =
-                Query4.runQueryTest(jobTracker.newJob(KeyValueSource.fromMap(hzMap)), TREE_NAME, 1);
+                Query4.runQuery(jobTracker.newJob(KeyValueSource.fromMap(hzMap)), TREE_NAME, 1);
 
         // Assertions
         List<ComparablePair<String, String>> expected = Arrays.asList(
@@ -139,7 +139,7 @@ public class Query4Test {
 
         // Run Query
         final SortedSet<ComparablePair<String, String>> result =
-                Query4.runQueryTest(jobTracker.newJob(KeyValueSource.fromMap(hzMap)), TREE_NAME, 2);
+                Query4.runQuery(jobTracker.newJob(KeyValueSource.fromMap(hzMap)), TREE_NAME, 2);
 
         // Assertions
         List<ComparablePair<String, String>> expected = Arrays.asList(
@@ -174,7 +174,7 @@ public class Query4Test {
 
         // Run Query
         final SortedSet<ComparablePair<String, String>> result =
-                Query4.runQueryTest(jobTracker.newJob(KeyValueSource.fromMap(hzMap)), TREE_NAME, 3);
+                Query4.runQuery(jobTracker.newJob(KeyValueSource.fromMap(hzMap)), TREE_NAME, 3);
 
         // Assertions
         List<ComparablePair<String, String>> expected = Arrays.asList(
@@ -206,7 +206,7 @@ public class Query4Test {
 
         // Run Query
         final SortedSet<ComparablePair<String, String>> result =
-                Query4.runQueryTest(jobTracker.newJob(KeyValueSource.fromMap(hzMap)), TREE_NAME, 4);
+                Query4.runQuery(jobTracker.newJob(KeyValueSource.fromMap(hzMap)), TREE_NAME, 4);
 
         // Assertions
         List<ComparablePair<String, String>> expected = Collections.singletonList(
@@ -236,7 +236,7 @@ public class Query4Test {
 
         // Run Query
         final SortedSet<ComparablePair<String, String>> result =
-                Query4.runQueryTest(jobTracker.newJob(KeyValueSource.fromMap(hzMap)), TREE_NAME, 5);
+                Query4.runQuery(jobTracker.newJob(KeyValueSource.fromMap(hzMap)), TREE_NAME, 5);
 
         // Assertions
         assertEquals(0, result.size());
