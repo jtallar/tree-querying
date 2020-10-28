@@ -4,7 +4,6 @@ import ar.edu.itba.pod.tpe.models.Tree;
 import ar.edu.itba.pod.tpe.models.Street;
 import com.hazelcast.mapreduce.Context;
 import com.hazelcast.mapreduce.Mapper;
-import com.sun.istack.internal.NotNull;
 import java.util.Map;
 
 /**
@@ -18,7 +17,7 @@ public class StreetTreeMapper implements Mapper<String, Tree, Street,Long> {
 
     private final Map<String, Long> neighbourhoods;
 
-    public StreetTreeMapper(@NotNull Map<String, Long> neighbourhoods) {
+    public StreetTreeMapper(Map<String, Long> neighbourhoods) {
         this.neighbourhoods = neighbourhoods;
     }
 
