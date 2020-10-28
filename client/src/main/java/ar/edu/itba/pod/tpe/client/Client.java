@@ -61,11 +61,7 @@ public class Client {
             return;
         }
 
-        ClientConfig config = new ClientConfig();
-        config.getGroupConfig().setName("g6-cluster").setPassword("123456");
-        config.getNetworkConfig().addAddress(clusterAddresses.toArray(new String[0]));
-        config.setProperty("hazelcast.logging.type", "slf4j");
-        HazelcastInstance hz = HazelcastClient.newHazelcastClient(config);
+        HazelcastInstance hz = HazelcastClient.newHazelcastClient(getClientConfig());
 
         JobTracker jobTracker = hz.getJobTracker("g6-job-" + query);
 
@@ -82,11 +78,10 @@ public class Client {
         }
         logger.info("Fin de la lectura del archivo");
 
-        final KeyValueSource<Neighbourhood, List<Tree>> source = KeyValueSource.fromMap(map);
-        final Job<Neighbourhood, List<Tree>> job = jobTracker.newJob(source);
-
         System.out.println("Iniciando trabajo de map/reduce para la " + query + "...");
         logger.info("Inicio del trabajo map/reduce");
+        final KeyValueSource<Neighbourhood, List<Tree>> source = KeyValueSource.fromMap(map);
+        final Job<Neighbourhood, List<Tree>> job = jobTracker.newJob(source);
         try {
             runQuery(job, jobTracker, hz);
         } catch (InterruptedException | ExecutionException e) {
@@ -94,7 +89,7 @@ public class Client {
             System.exit(ERROR_STATUS);
             return;
         } catch (IOException e) {
-            System.err.println(e.getMessage());
+            System.err.println("Could not read neighbourhoods file from directory " + inPath);
             System.exit(ERROR_STATUS);
             return;
         }
@@ -104,7 +99,6 @@ public class Client {
         System.out.println(query + " terminada, saliendo...");
     }
 
-    // TODO: ver como marcar que argumentos son requeridos segun el numero de query
     private static void argumentParsing() throws ArgumentException {
         Properties properties = System.getProperties();
 
@@ -130,24 +124,39 @@ public class Client {
         inPath = Optional.ofNullable(properties.getProperty(IN_PATH_PARAM)).orElseThrow(new ArgumentException("In path must be supplied using -DinPath"));
         outPath = Optional.ofNullable(properties.getProperty(OUT_PATH_PARAM)).orElseThrow(new ArgumentException("Out path must be supplied using -DoutPath"));
 
-        try {
-            minNumber = Long.parseLong(properties.getProperty(MIN_PARAM));
-            if (minNumber <= 0) throw new NumberFormatException(); // minNumber debe ser un entero positivo
-        } catch (NumberFormatException e) {
-            throw new ArgumentException("min number must be supplied using -Dmin and it must be a positive number (min > 0)");
+        final boolean[] additionalParams = getAdditionalParams();
+
+        if (additionalParams[MIN_PARAM_INDEX]) {
+            try {
+                minNumber = Long.parseLong(properties.getProperty(MIN_PARAM));
+                if (minNumber <= 0) throw new NumberFormatException(); // minNumber debe ser un entero positivo
+            } catch (NumberFormatException e) {
+                throw new ArgumentException("min number must be supplied using -Dmin and it must be a positive number (min > 0)");
+            }
         }
 
-        try {
-            limit = Long.parseLong(properties.getProperty(N_PARAM));
-            if (limit <= 0) throw new NumberFormatException();
-        } catch (NumberFormatException e) {
-            throw new ArgumentException("n number must be supplied using -Dn and it must be a positive number");
+        if (additionalParams[N_PARAM_INDEX]) {
+            try {
+                limit = Long.parseLong(properties.getProperty(N_PARAM));
+                if (limit <= 0) throw new NumberFormatException();
+            } catch (NumberFormatException e) {
+                throw new ArgumentException("n number must be supplied using -Dn and it must be a positive number");
+            }
         }
 
-        treeName = Optional.ofNullable(properties.getProperty(NAME_PARAM)).orElseThrow(new ArgumentException("Tree name must be supplied using -Dname"));
+        if (additionalParams[NAME_PARAM_INDEX]) {
+            treeName = Optional.ofNullable(properties.getProperty(NAME_PARAM)).orElseThrow(new ArgumentException("Tree name must be supplied using -Dname"));
+        }
     }
 
-    // TODO: VER COMO HACER ESTO DE MANERA MAS PROLIJA
+    private static ClientConfig getClientConfig() {
+        ClientConfig config = new ClientConfig();
+        config.getGroupConfig().setName("g6-cluster").setPassword("123456");
+        config.getNetworkConfig().addAddress(clusterAddresses.toArray(new String[0]));
+        config.setProperty("hazelcast.logging.type", "slf4j");
+        return config;
+    }
+
     private static void runQuery(Job<Neighbourhood, List<Tree>> job, JobTracker jobTracker, HazelcastInstance hz)
             throws InterruptedException, ExecutionException, IOException {
 
