@@ -47,6 +47,18 @@ public class Query1 {
         return future.get();
     }
 
+    public static Set<ComparablePair<Double, String>> runQueryTest(Job<Neighbourhood, List<Tree>> job, Map<String, Long> neighbours)
+            throws InterruptedException, ExecutionException {
+        final JobCompletableFuture<Set<ComparablePair<Double, String>>> future = job
+                .keyPredicate(new Query1KeyPredicate(neighbours))
+                .mapper(new Query1Mapper())
+                .reducer(new Query1ReducerFactory())
+                .submit(new Query1Collator(neighbours));
+
+        // Wait and retrieve result
+        return future.get();
+    }
+
     /**
      * CSV header for this specific query
      */
