@@ -161,19 +161,12 @@ public class Client {
     private static void runQuery(Job<String, Tree> job, JobTracker jobTracker, HazelcastInstance hz)
             throws InterruptedException, ExecutionException, IOException {
 
-        final Map<String, Long> neighbourhoods;
         switch (query) {
             case "query1":
-                logger.info("Inicio de la lectura del archivo barrios");
-                neighbourhoods = Parser.parseNeighbourhood(inPath, city);
-                logger.info("Fin de la lectura del archivo barrios");
-                ClientUtils.genericSetCSVPrinter(outPath + query + ".csv", Query1.runQuery(job, neighbourhoods), Query1.print, Query1.HEADER);
+                ClientUtils.genericSetCSVPrinter(outPath + query + ".csv", Query1.runQuery(job, getNeighbourhoods()), Query1.print, Query1.HEADER);
                 break;
             case "query2":
-                logger.info("Inicio de la lectura del archivo barrios");
-                neighbourhoods = Parser.parseNeighbourhood(inPath, city);
-                logger.info("Fin de la lectura del archivo barrios");
-                ClientUtils.genericMapCSVPrinter(outPath + query + ".csv", Query2.runQuery(job, neighbourhoods, minNumber), Query2.print, Query2.HEADER);
+                ClientUtils.genericMapCSVPrinter(outPath + query + ".csv", Query2.runQuery(job, getNeighbourhoods(), minNumber), Query2.print, Query2.HEADER);
                 break;
             case "query3":
                 ClientUtils.genericSetCSVPrinter(outPath + query + ".csv", Query3.runQuery(job, limit), Query3.print, Query3.HEADER);
@@ -187,6 +180,13 @@ public class Client {
             default:
                 break;
         }
+    }
+
+    private static Map<String, Long> getNeighbourhoods() throws IOException {
+        logger.info("Inicio de la lectura del archivo barrios");
+        final Map<String, Long> neighbourhoods = Parser.parseNeighbourhood(inPath, city);
+        logger.info("Fin de la lectura del archivo barrios");
+        return neighbourhoods;
     }
 
     private static boolean[] getAdditionalParams() {
