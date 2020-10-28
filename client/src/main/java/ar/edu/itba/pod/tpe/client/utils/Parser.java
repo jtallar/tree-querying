@@ -34,7 +34,7 @@ public class Parser {
                 .stream().skip(1).collect(Collectors.toList());
 
         /** analyze each line */
-        file.parallelStream().forEach(line -> {
+        file.forEach(line -> {
             String[] parse = line.split(";");
             Neighbourhood neighbourhood = new Neighbourhood(parse[headersIndex[0]]);
             Tree tree = new Tree(parse[headersIndex[1]], parse[headersIndex[2]], Double.parseDouble(parse[headersIndex[3]]));
@@ -62,7 +62,7 @@ public class Parser {
                 .stream().skip(1).collect(Collectors.toList());
 
         /** analyze each line */
-        file.parallelStream().forEach(line -> {
+        file.forEach(line -> {
             String[] parse = line.split(";");
             neighbourhoods.put(parse[0], Long.valueOf(parse[1]));
         });

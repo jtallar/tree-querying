@@ -24,7 +24,7 @@ public class NeighbourhoodTreeFilteredMapper implements Mapper<Neighbourhood, Li
 
     @Override
     public void map(Neighbourhood neighbourhood, List<Tree> trees, Context<String, Long> context) {
-        trees.parallelStream().filter(t -> treeName.equals(t.getCommonName()))
-                .parallel().forEach(t -> context.emit(neighbourhood.getName(), ONE));
+        trees.stream().filter(t -> treeName.equals(t.getCommonName()))
+                .forEach(t -> context.emit(neighbourhood.getName(), ONE));
     }
 }

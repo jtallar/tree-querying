@@ -19,6 +19,6 @@ public class StreetTreeMapper implements Mapper<Neighbourhood, List<Tree>, Stree
 
     @Override
     public void map(Neighbourhood neighbourhood, List<Tree> trees, Context<Street, Long> context) {
-        trees.parallelStream().forEach(t -> context.emit(new Street(neighbourhood.getName(), t.getStreetName()), ONE));
+        trees.forEach(t -> context.emit(new Street(neighbourhood.getName(), t.getStreetName()), ONE));
     }
 }

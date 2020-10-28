@@ -17,6 +17,6 @@ public class NameDiameterMapper implements Mapper<Neighbourhood, List<Tree>, Str
 
     @Override
     public void map(Neighbourhood neighbourhood, List<Tree> trees, Context<String, Double> context) {
-        trees.parallelStream().forEach(t -> context.emit(t.getCommonName(), t.getDiameter()));
+        trees.forEach(t -> context.emit(t.getCommonName(), t.getDiameter()));
     }
 }
