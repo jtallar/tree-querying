@@ -1,73 +1,58 @@
 package ar.edu.itba.pod.tpe.client.queries;
 
-import ar.edu.itba.pod.tpe.client.utils.ClientUtils;
 import ar.edu.itba.pod.tpe.client.utils.ThrowableBiConsumer;
 import ar.edu.itba.pod.tpe.collators.Query1Collator;
-import ar.edu.itba.pod.tpe.collators.Query4Collator;
-import ar.edu.itba.pod.tpe.keyPredicates.Query1KeyPredicate;
-import ar.edu.itba.pod.tpe.mappers.Query1Mapper;
-import ar.edu.itba.pod.tpe.mappers.Query4Mapper;
-import ar.edu.itba.pod.tpe.models.Neighbourhood;
+import ar.edu.itba.pod.tpe.mappers.NeighbourhoodTreeMapper;
 import ar.edu.itba.pod.tpe.models.Tree;
-import ar.edu.itba.pod.tpe.reducers.Query1ReducerFactory;
-import ar.edu.itba.pod.tpe.reducers.Query4ReducerFactory;
+import ar.edu.itba.pod.tpe.reducers.SumReducerFactory;
 import ar.edu.itba.pod.tpe.utils.ComparablePair;
 import com.hazelcast.mapreduce.Job;
 import com.hazelcast.mapreduce.JobCompletableFuture;
 import org.apache.commons.csv.CSVPrinter;
 
 import java.io.IOException;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
+import java.util.function.BiConsumer;
 
-
+/**
+ * Class with static methods dedicated to solve the Query 1
+ */
 public class Query1 {
-    private static final String QUERY_HEADER = "GRUPO;ARBOLES_POR_HABITANTE";
 
-    public static void runQuery(Job<Neighbourhood, List<Tree>> job, Map<String, Long> neighbours, String outPath)
+    /**
+     * Created the MapReduce with the corresponding classes
+     * @param job The job created from the IMap instance with neighbourhoods and list of trees
+     * @param neighbourhoods Map with valid neighbourhoods and their respective population
+     * @return The sorted set returned with the resulting values of the MapReduce
+     * @throws InterruptedException
+     * @throws ExecutionException
+     */
+    public static NavigableSet<ComparablePair<Double, String>> runQuery(Job<String, Tree> job, Map<String, Long> neighbourhoods)
             throws InterruptedException, ExecutionException  {
-        final JobCompletableFuture<Set<ComparablePair<Double, String>>> future = job
-                .keyPredicate(new Query1KeyPredicate(neighbours))
-                .mapper(new Query1Mapper())
-                .reducer(new Query1ReducerFactory()) // same as query 4
-                .submit(new Query1Collator(neighbours));
 
-        // Wait and retrieve result
-        Set<ComparablePair<Double, String>> result;
-        result = future.get();
-
-        ClientUtils.genericCSVPrinter2(outPath + "query1.csv", result, printQuery);
-
-    }
-
-    public static Set<ComparablePair<Double, String>> runQueryTest(Job<Neighbourhood, List<Tree>> job, Map<String, Long> neighbours)
-            throws InterruptedException, ExecutionException {
-        final JobCompletableFuture<Set<ComparablePair<Double, String>>> future = job
-                .keyPredicate(new Query1KeyPredicate(neighbours))
-                .mapper(new Query1Mapper())
-                .reducer(new Query1ReducerFactory())
-                .submit(new Query1Collator(neighbours));
-
-        // Wait and retrieve result
+        final JobCompletableFuture<NavigableSet<ComparablePair<Double, String>>> future = job
+//                .keyPredicate(new NeighbourhoodKeyPredicate(neighbourhoods))
+                .mapper(new NeighbourhoodTreeMapper(neighbourhoods))
+                .reducer(new SumReducerFactory<>())
+                .submit(new Query1Collator(neighbourhoods));
         return future.get();
     }
 
     /**
-     * Throwable consumer, prints the result as a BarrioA;BarrioB
+     * CSV header for this specific query
      */
-    private static final ThrowableBiConsumer<Set<ComparablePair<Double, String>>, CSVPrinter, IOException> printQuery = (results, printer) -> {
-        // Print header and fill csv with results
-        printer.printRecord(QUERY_HEADER);
-        results.forEach(p -> {
-            try {
-                DecimalFormat df = new DecimalFormat("#0.00", new DecimalFormatSymbols(Locale.ENGLISH));
-                printer.printRecord(p.getSecond(), df.format(p.getFirst()));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
-    };
+    public static final String HEADER = "BARRIO;ARBOLES_POR_HABITANTE";
 
+    /**
+     * Throwable consumer, printing method used for each value of the set
+     */
+    public static final ThrowableBiConsumer<ComparablePair<Double, String>, CSVPrinter, IOException> print = (e, p) -> {
+        DecimalFormat df = new DecimalFormat("#0.00", new DecimalFormatSymbols(Locale.ENGLISH));
+        df.setRoundingMode(RoundingMode.DOWN);
+        p.printRecord(e.getSecond(), df.format(e.getFirst()));
+    };
 }

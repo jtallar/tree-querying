@@ -11,6 +11,7 @@ import com.hazelcast.client.config.ClientConfig;
 import com.hazelcast.config.Config;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.IList;
 import com.hazelcast.core.IMap;
 import com.hazelcast.mapreduce.JobTracker;
 import com.hazelcast.mapreduce.KeyValueSource;
@@ -33,7 +34,7 @@ public class Query1Test {
 
     private HazelcastInstance member, client;
     private JobTracker jobTracker;
-    private IMap<Neighbourhood, List<Tree>> hzMap;
+    private IList<Tree> hzList;
 
     @Before
     public void setUp() {
@@ -43,8 +44,8 @@ public class Query1Test {
         client = HazelcastClient.newHazelcastClient(clientConfig);
 
         jobTracker = client.getJobTracker("g6-test-job-query1");
-        hzMap = client.getMap("g6-test-map-query1");
-        hzMap.clear();
+        hzList = client.getList("g6-test-list-query1");
+        hzList.clear();
     }
 
     @After
@@ -59,7 +60,7 @@ public class Query1Test {
 
         // Run Query
         final Set<ComparablePair<Double, String>> result =
-                Query1.runQueryTest(jobTracker.newJob(KeyValueSource.fromMap(hzMap)), neigh);
+                Query1.runQuery(jobTracker.newJob(KeyValueSource.fromList(hzList)), neigh);
 
         // Assertions
         assertEquals(0, result.size());
@@ -75,18 +76,15 @@ public class Query1Test {
         for(String neighbourhood : neighbourhoods2)
             neigh.put(neighbourhood,POPULATION_B);
 
-        Map<Neighbourhood, List<Tree>> map = new HashMap<>();
-        Neighbourhood n = new Neighbourhood("OTHER_NEIGHBOURHOOD");
         List<Tree> trees = new ArrayList<>();
         for (int i = 0; i < 3 ; i++)
-            trees.add(new Tree(STREET_NAME, TREE_NAME, DIAMETER));
+            trees.add(new Tree("OTHER_NEIGHBOURHOOD", STREET_NAME, TREE_NAME, DIAMETER));
 
-        map.put(n,trees);
-        hzMap.putAll(map);
+        hzList.addAll(trees);
 
         // Run Query
         final Set<ComparablePair<Double, String>> result =
-                Query1.runQueryTest(jobTracker.newJob(KeyValueSource.fromMap(hzMap)), neigh);
+                Query1.runQuery(jobTracker.newJob(KeyValueSource.fromList(hzList)), neigh);
 
         // Assertions
         assertEquals(0, result.size());
@@ -102,18 +100,15 @@ public class Query1Test {
         for(String neighbourhood : neighbourhoods2)
             neigh.put(neighbourhood,POPULATION_B);
 
-        Map<Neighbourhood, List<Tree>> map = new HashMap<>();
-        Neighbourhood n = new Neighbourhood(neighbourhoods1[0]);
         List<Tree> trees = new ArrayList<>();
         for (int i = 0; i < 3 ; i++)
-            trees.add(new Tree(STREET_NAME, TREE_NAME, DIAMETER));
+            trees.add(new Tree(neighbourhoods1[0], STREET_NAME, TREE_NAME, DIAMETER));
 
-        map.put(n,trees);
-        hzMap.putAll(map);
+        hzList.addAll(trees);
 
         // Run Query
         final Set<ComparablePair<Double, String>> result =
-                Query1.runQueryTest(jobTracker.newJob(KeyValueSource.fromMap(hzMap)), neigh);
+                Query1.runQuery(jobTracker.newJob(KeyValueSource.fromList(hzList)), neigh);
 
         // Assertions
         assertEquals(1, result.size());
@@ -129,17 +124,18 @@ public class Query1Test {
         for(String neighbourhood : neighbourhoods2)
             neigh.put(neighbourhood, POPULATION_B);              // neigh from neigh2 -> 2000L pop
 
-        Map<Neighbourhood, List<Tree>> map = new HashMap<>();
         List<Tree> trees = new ArrayList<>();
-        for (int i = 0; i < 3 ; i++)
-            trees.add(new Tree(STREET_NAME, TREE_NAME, DIAMETER));
-
-        for(String neighbourhood : neighbourhoods1)                     // 3 trees by neigh
-            map.put(new Neighbourhood(neighbourhood), trees);
-        for(String neighbourhood : neighbourhoods2)                     // 3 trees by neigh
-            map.put(new Neighbourhood(neighbourhood), trees);
-
-        hzMap.putAll(map);
+        for(String neighbourhood : neighbourhoods1) {                    // 3 trees by neigh
+            trees.add(new Tree(neighbourhood, STREET_NAME, TREE_NAME, DIAMETER));
+            trees.add(new Tree(neighbourhood, STREET_NAME, TREE_NAME, DIAMETER));
+            trees.add(new Tree(neighbourhood, STREET_NAME, TREE_NAME, DIAMETER));
+        }
+        for(String neighbourhood : neighbourhoods2) {                  // 3 trees by neigh
+            trees.add(new Tree(neighbourhood, STREET_NAME, TREE_NAME, DIAMETER));
+            trees.add(new Tree(neighbourhood, STREET_NAME, TREE_NAME, DIAMETER));
+            trees.add(new Tree(neighbourhood, STREET_NAME, TREE_NAME, DIAMETER));
+        }
+        hzList.addAll(trees);
 
         // build expected result
         List<ComparablePair<Double, String>> expected = Arrays.asList(
@@ -151,7 +147,7 @@ public class Query1Test {
 
         // Run Query
         final Set<ComparablePair<Double, String>> result =
-                Query1.runQueryTest(jobTracker.newJob(KeyValueSource.fromMap(hzMap)), neigh);
+                Query1.runQuery(jobTracker.newJob(KeyValueSource.fromList(hzList)), neigh);
 
         int i = 0;
         for (ComparablePair pair : result)
@@ -171,17 +167,18 @@ public class Query1Test {
         for(String neighbourhood : neighbourhoods2)
             neigh.put(neighbourhood, POPULATION_C);              // neigh from neigh2 -> 500L pop
 
-        Map<Neighbourhood, List<Tree>> map = new HashMap<>();
         List<Tree> trees = new ArrayList<>();
-        for (int i = 0; i < 3 ; i++)
-            trees.add(new Tree(STREET_NAME, TREE_NAME, DIAMETER));
-
-        for(String neighbourhood : neighbourhoods1)                     // 3 trees by neigh
-            map.put(new Neighbourhood(neighbourhood), trees);
-        for(String neighbourhood : neighbourhoods2)                     // 3 trees by neigh
-            map.put(new Neighbourhood(neighbourhood), trees);
-
-        hzMap.putAll(map);
+        for(String neighbourhood : neighbourhoods1) {                    // 3 trees by neigh
+            trees.add(new Tree(neighbourhood, STREET_NAME, TREE_NAME, DIAMETER));
+            trees.add(new Tree(neighbourhood, STREET_NAME, TREE_NAME, DIAMETER));
+            trees.add(new Tree(neighbourhood, STREET_NAME, TREE_NAME, DIAMETER));
+        }
+        for(String neighbourhood : neighbourhoods2) {                  // 3 trees by neigh
+            trees.add(new Tree(neighbourhood, STREET_NAME, TREE_NAME, DIAMETER));
+            trees.add(new Tree(neighbourhood, STREET_NAME, TREE_NAME, DIAMETER));
+            trees.add(new Tree(neighbourhood, STREET_NAME, TREE_NAME, DIAMETER));
+        }
+        hzList.addAll(trees);
 
         // build expected result
         List<ComparablePair<Double, String>> expected = Arrays.asList(
@@ -193,7 +190,7 @@ public class Query1Test {
 
         // Run Query
         final Set<ComparablePair<Double, String>> result =
-                Query1.runQueryTest(jobTracker.newJob(KeyValueSource.fromMap(hzMap)), neigh);
+                Query1.runQuery(jobTracker.newJob(KeyValueSource.fromList(hzList)), neigh);
 
         int i = 0;
         for (ComparablePair pair : result)

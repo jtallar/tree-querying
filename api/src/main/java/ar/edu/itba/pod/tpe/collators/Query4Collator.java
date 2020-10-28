@@ -2,9 +2,7 @@ package ar.edu.itba.pod.tpe.collators;
 
 import ar.edu.itba.pod.tpe.utils.ComparablePair;
 import com.hazelcast.mapreduce.Collator;
-
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Receives entries with String, Long
@@ -20,21 +18,15 @@ public class Query4Collator implements Collator<Map.Entry<String, Long>, SortedS
 
     @Override
     public SortedSet<ComparablePair<String, String>> collate(Iterable<Map.Entry<String, Long>> iterable) {
-        // neighbourhoods has a set of
+
         Set<String> neighbourhoods = new HashSet<>();
-        for (Map.Entry<String, Long> element : iterable) {
-            if (element.getValue() >= minCount)
-                neighbourhoods.add(element.getKey());
-        }
+        iterable.forEach(e -> { if (e.getValue() >= minCount) neighbourhoods.add(e.getKey()); });
 
         SortedSet<ComparablePair<String, String>> out = new TreeSet<>(ComparablePair::compareTo);
-        for (String first : neighbourhoods) {
-            for (String second : neighbourhoods) {
-                if (first.compareTo(second) < 0) {
-                    out.add(new ComparablePair<>(first, second));
-                }
-            }
-        }
+        neighbourhoods.forEach(f -> neighbourhoods.forEach(s -> { if (f.compareTo(s) < 0) out.add(new ComparablePair<>(f, s)); }));
+
         return out;
     }
+
+
 }

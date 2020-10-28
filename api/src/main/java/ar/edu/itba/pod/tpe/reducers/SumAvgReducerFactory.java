@@ -3,20 +3,19 @@ package ar.edu.itba.pod.tpe.reducers;
 import com.hazelcast.mapreduce.Reducer;
 import com.hazelcast.mapreduce.ReducerFactory;
 
-
 /**
- * Recieves String, Double
- * Returns  String, avg(values)
+ * Receives a key-value pair with T as key, and a Double as value.
+ * Reduces only using the value and returning its sum.
  */
-public class Query3ReducerFactory implements ReducerFactory<String, Double, Double> {
+public class SumAvgReducerFactory<T> implements ReducerFactory<T, Double, Double> {
     private static final long serialVersionUID = -3474187647081106625L;
 
     @Override
-    public Reducer<Double, Double> newReducer(String treeName) {
-        return new Query3Reducer();
+    public Reducer<Double, Double> newReducer(T key) {
+        return new SumAvgReducer();
     }
 
-    private class Query3Reducer extends Reducer<Double, Double> {
+    private class SumAvgReducer extends Reducer<Double, Double> {
         private double sum;
         private int total;
 

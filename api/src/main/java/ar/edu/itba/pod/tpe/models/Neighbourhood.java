@@ -6,40 +6,55 @@ import com.hazelcast.nio.serialization.DataSerializable;
 
 import java.io.IOException;
 
+/**
+ * Serializable Data class modeling the neighbourhood information.
+ */
 public class Neighbourhood implements DataSerializable {
 
     private String name;
-    private int population;
 
-    // Empty constructor for Hazelcast
+    /** Constructors */
+
     public Neighbourhood() {
+        /** Empty constructor for Hazelcast */
     }
 
     public Neighbourhood(String name) {
         this.name = name;
-        this.population = 0;
     }
 
-    public Neighbourhood(String name, Integer population) {
-        this.name = name;
-        this.population = population;
-    }
+    /** Getters */
 
     public String getName() {
         return name;
     }
 
-    public void setPopulation(int population) {
-        this.population = population;
-    }
-
-    public int getPopulation() { return this.population; }
-
+    /**
+     * Writes the data from a neighbourhood into a {@link ObjectDataOutput}
+     * @param out the object data to be saved serialized into
+     * @throws IOException when there is an error parsing the fields
+     */
     @Override
-    public String toString() {
-        return   name + "--" + population;
+    public void writeData(ObjectDataOutput out) throws IOException {
+        out.writeUTF(name);
     }
 
+    /**
+     * Reads the data from a {@link ObjectDataInput} and converts to a neighbourhood
+     * @param in the object data to be deserialized
+     * @throws IOException when there is an error parsing the fields
+     */
+    @Override
+    public void readData(ObjectDataInput in) throws IOException {
+        name = in.readUTF();
+    }
+
+    /**
+     * Checks the two objects for equality by delegating to their respective
+     * {@link Object#equals(Object)} methods.
+     * @param o the {@link Neighbourhood} to which this one is to be checked for equality
+     * @return true if the underlying objects of the Neighbourhood are both considered equal
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -48,20 +63,23 @@ public class Neighbourhood implements DataSerializable {
         return name.equals(that.name);
     }
 
+    /**
+     * Compute a hash code using the hash codes of the underlying objects
+     * @return a hashcode of the Neighbourhood
+     */
     @Override
     public int hashCode() {
-        return name.hashCode();
+        return (name == null ? 0 : name.hashCode());
     }
 
+    /**
+     * Simply overrides the string printing for this class
+     * @return the resulting print string
+     */
     @Override
-    public void writeData(ObjectDataOutput out) throws IOException {
-        out.writeUTF(name);
-        out.writeInt(population);
-    }
-
-    @Override
-    public void readData(ObjectDataInput in) throws IOException {
-        name = in.readUTF();
-        population = in.readInt();
+    public String toString() {
+        return "Neighbourhood{" +
+                "name='" + name + '\'' +
+                '}';
     }
 }

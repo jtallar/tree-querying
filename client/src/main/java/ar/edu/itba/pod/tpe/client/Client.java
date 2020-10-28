@@ -6,7 +6,7 @@ import ar.edu.itba.pod.tpe.client.queries.Query1;
 import ar.edu.itba.pod.tpe.client.queries.Query3;
 import ar.edu.itba.pod.tpe.client.queries.Query4;
 import ar.edu.itba.pod.tpe.client.queries.Query5;
-import ar.edu.itba.pod.tpe.client.queries.Query5B;
+import ar.edu.itba.pod.tpe.client.utils.City;
 import ar.edu.itba.pod.tpe.client.utils.ClientUtils;
 import ar.edu.itba.pod.tpe.client.utils.Parser;
 import ar.edu.itba.pod.tpe.models.Neighbourhood;
@@ -14,6 +14,7 @@ import ar.edu.itba.pod.tpe.models.Tree;
 import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.client.config.ClientConfig;
 import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.IList;
 import com.hazelcast.core.IMap;
 import com.hazelcast.mapreduce.Job;
 import com.hazelcast.mapreduce.JobTracker;
@@ -21,7 +22,6 @@ import com.hazelcast.mapreduce.KeyValueSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.management.Query;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.*;
@@ -52,7 +52,6 @@ public class Client {
     private static String inPath, outPath;
     private static long minNumber, limit;
     private static String treeName;
-    private static Map<String, Long>  neighborhoods;
 
     public static void main(String[] args) {
         try {
@@ -63,45 +62,35 @@ public class Client {
             return;
         }
 
-        // TODO: Esto no deberia ir aca, solo hacerlo si es query 1 o 2 (y dentro de los tiempos de lectura)
-        try {
-            neighborhoods = Parser.parseNeighbourhood(inPath, city);
-        } catch (IOException e) {
-            System.err.println(e.getMessage());
-            System.exit(ERROR_STATUS);
-            return;
-        }
-
-        ClientConfig config = new ClientConfig();
-        config.getGroupConfig().setName("g6-cluster").setPassword("123456");
-        config.getNetworkConfig().addAddress(clusterAddresses.toArray(new String[0]));
-        config.setProperty("hazelcast.logging.type", "slf4j");
-        HazelcastInstance hz = HazelcastClient.newHazelcastClient(config);
+        HazelcastInstance hz = HazelcastClient.newHazelcastClient(getClientConfig());
 
         JobTracker jobTracker = hz.getJobTracker("g6-job-" + query);
 
-        final IMap<Neighbourhood, List<Tree>> map = hz.getMap("g6-map-" + query);
-        map.clear();
-        logger.info("Inicio de la lectura del archivo");
+        final IList<Tree> list = hz.getList("g6-list-" + query);
+        list.clear();
+        logger.info("Inicio de la lectura del archivo arboles");
         System.out.println("Iniciando lectura del archivo de arboles...");
         try {
-            map.putAll(Parser.parseTrees(inPath, city));
+            list.addAll(Parser.parseTrees(inPath, city));
         } catch (IOException e) {
             System.err.println("Could not read trees file from directory " + inPath);
             System.exit(ERROR_STATUS);
             return;
         }
-        logger.info("Fin de la lectura del archivo");
-
-        final KeyValueSource<Neighbourhood, List<Tree>> source = KeyValueSource.fromMap(map);
-        final Job<Neighbourhood, List<Tree>> job = jobTracker.newJob(source);
+        logger.info("Fin de la lectura del archivo arboles");
 
         System.out.println("Iniciando trabajo de map/reduce para la " + query + "...");
         logger.info("Inicio del trabajo map/reduce");
+        final KeyValueSource<String, Tree> source = KeyValueSource.fromList(list);
+        final Job<String, Tree> job = jobTracker.newJob(source);
         try {
             runQuery(job, jobTracker, hz);
         } catch (InterruptedException | ExecutionException e) {
             System.err.println("Future execution interrupted. Exiting...");
+            System.exit(ERROR_STATUS);
+            return;
+        } catch (IOException e) {
+            System.err.println("Could not read neighbourhoods file from directory " + inPath);
             System.exit(ERROR_STATUS);
             return;
         }
@@ -111,7 +100,6 @@ public class Client {
         System.out.println(query + " terminada, saliendo...");
     }
 
-    // TODO: ver como marcar que argumentos son requeridos segun el numero de query
     private static void argumentParsing() throws ArgumentException {
         Properties properties = System.getProperties();
 
@@ -137,53 +125,68 @@ public class Client {
         inPath = Optional.ofNullable(properties.getProperty(IN_PATH_PARAM)).orElseThrow(new ArgumentException("In path must be supplied using -DinPath"));
         outPath = Optional.ofNullable(properties.getProperty(OUT_PATH_PARAM)).orElseThrow(new ArgumentException("Out path must be supplied using -DoutPath"));
 
-        try {
-            minNumber = Long.parseLong(properties.getProperty(MIN_PARAM));
-            if (minNumber <= 0) throw new NumberFormatException(); // minNumber debe ser un entero positivo
-        } catch (NumberFormatException e) {
-            throw new ArgumentException("min number must be supplied using -Dmin and it must be a positive number (min > 0)");
+        final boolean[] additionalParams = getAdditionalParams();
+
+        if (additionalParams[MIN_PARAM_INDEX]) {
+            try {
+                minNumber = Long.parseLong(properties.getProperty(MIN_PARAM));
+                if (minNumber <= 0) throw new NumberFormatException(); // minNumber debe ser un entero positivo
+            } catch (NumberFormatException e) {
+                throw new ArgumentException("min number must be supplied using -Dmin and it must be a positive number (min > 0)");
+            }
         }
 
-        try {
-            limit = Long.parseLong(properties.getProperty(N_PARAM));
-            if (limit <= 0) throw new NumberFormatException();
-        } catch (NumberFormatException e) {
-            throw new ArgumentException("n number must be supplied using -Dn and it must be a positive number");
+        if (additionalParams[N_PARAM_INDEX]) {
+            try {
+                limit = Long.parseLong(properties.getProperty(N_PARAM));
+                if (limit <= 0) throw new NumberFormatException();
+            } catch (NumberFormatException e) {
+                throw new ArgumentException("n number must be supplied using -Dn and it must be a positive number");
+            }
         }
 
-        treeName = Optional.ofNullable(properties.getProperty(NAME_PARAM)).orElseThrow(new ArgumentException("Tree name must be supplied using -Dname"));
+        if (additionalParams[NAME_PARAM_INDEX]) {
+            treeName = Optional.ofNullable(properties.getProperty(NAME_PARAM)).orElseThrow(new ArgumentException("Tree name must be supplied using -Dname"));
+        }
     }
 
-    // TODO: VER COMO HACER ESTO DE MANERA MAS PROLIJA
-    private static void runQuery(Job<Neighbourhood, List<Tree>> job, JobTracker jobTracker, HazelcastInstance hz)
-            throws InterruptedException, ExecutionException {
+    private static ClientConfig getClientConfig() {
+        ClientConfig config = new ClientConfig();
+        config.getGroupConfig().setName("g6-cluster").setPassword("123456");
+        config.getNetworkConfig().addAddress(clusterAddresses.toArray(new String[0]));
+        config.setProperty("hazelcast.logging.type", "slf4j");
+        return config;
+    }
+
+    private static void runQuery(Job<String, Tree> job, JobTracker jobTracker, HazelcastInstance hz)
+            throws InterruptedException, ExecutionException, IOException {
 
         switch (query) {
             case "query1":
-                Query1.runQuery(job, neighborhoods, outPath);
+                ClientUtils.genericSetCSVPrinter(outPath + query + ".csv", Query1.runQuery(job, getNeighbourhoods()), Query1.print, Query1.HEADER);
                 break;
             case "query2":
-                Query2.runQuery(job,neighborhoods,minNumber,outPath);
+                ClientUtils.genericMapCSVPrinter(outPath + query + ".csv", Query2.runQuery(job, getNeighbourhoods(), minNumber), Query2.print, Query2.HEADER);
                 break;
             case "query3":
-                Query3.runQuery(job, limit, outPath);
+                ClientUtils.genericSetCSVPrinter(outPath + query + ".csv", Query3.runQuery(job, limit), Query3.print, Query3.HEADER);
                 break;
             case "query4":
-                Query4.runQuery(job, treeName, minNumber, outPath);
+                ClientUtils.genericSetCSVPrinter(outPath + query + ".csv", Query4.runQuery(job, treeName, minNumber), Query4.print, Query4.HEADER);
                 break;
             case "query5":
-                final Map<String, Long> result = Query5.runQuery(job);
-                final IMap<String, Long> map = hz.getMap("g6-map-" + query + "-aux");
-                map.clear();
-                map.putAll(result);
-
-                final KeyValueSource<String, Long> source = KeyValueSource.fromMap(map);
-                final Job<String, Long> secondJob = jobTracker.newJob(source);
-                Query5B.runQuery(secondJob, outPath);
+                ClientUtils.genericSetCSVPrinter(outPath + query + ".csv", Query5.runQuery(job, jobTracker, hz), Query5.print, Query5.HEADER);
                 break;
             default:
                 break;
         }
+    }
+
+    private static Map<String, Long> getNeighbourhoods() throws IOException {
+        logger.info("Inicio de la lectura del archivo barrios");
+        final Map<String, Long> neighbourhoods = Parser.parseNeighbourhood(inPath, city);
+        logger.info("Fin de la lectura del archivo barrios");
+        return neighbourhoods;
     }
 
     private static boolean[] getAdditionalParams() {

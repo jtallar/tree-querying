@@ -4,15 +4,13 @@ import ar.edu.itba.pod.tpe.utils.ComparablePair;
 import com.hazelcast.mapreduce.Collator;
 
 import java.util.*;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
- * Receives entries with String, Long
- * Returns Sorted set of Comparable Pairs with cross join of this keys (k1 < k2)
+ * Receives entries with Sting, Double
+ * Returns Sorted set of Top (limit) Comparable Pairs
  */
-public class Query3Collator implements Collator<Map.Entry<String, Double>, SortedSet<ComparablePair<String, Double>>> {
-
+public class Query3Collator implements Collator<Map.Entry<String, Double>, NavigableSet<ComparablePair<Double, String>>> {
     private final long limit;
 
     public Query3Collator(long limit) {
@@ -20,21 +18,10 @@ public class Query3Collator implements Collator<Map.Entry<String, Double>, Sorte
     }
 
     @Override
-    public SortedSet<ComparablePair<String, Double>> collate(Iterable<Map.Entry<String, Double>> iterable) {
+    public NavigableSet<ComparablePair<Double, String>> collate(Iterable<Map.Entry<String, Double>> iterable) {
 
-        Comparator<ComparablePair<String, Double>> comparator = Comparator.comparing(ComparablePair::getSecond);
-        comparator = comparator.reversed();
-        comparator = comparator.thenComparing(ComparablePair::getFirst);
-        final Comparator<ComparablePair<String, Double>> comparatorFinal = comparator;
-
-        SortedSet<ComparablePair<String, Double>> out = new TreeSet<>(comparator);
-
-        for(Map.Entry<String, Double> element : iterable){
-            out.add(new ComparablePair<>(element.getKey(), element.getValue()));
-        }
-        Supplier<TreeSet<ComparablePair<String, Double>>> supplier = () -> new TreeSet<>(comparatorFinal);
-        out = out.stream().limit(limit).collect(Collectors.toCollection(supplier));
-
-        return out;
+        NavigableSet<ComparablePair<Double, String>> out = new TreeSet<>(ComparablePair::compareToModified);
+        iterable.forEach(e -> out.add(new ComparablePair<>(e.getValue(), e.getKey())));
+        return out.stream().limit(limit).collect(Collectors.toCollection(() -> new TreeSet<>(ComparablePair::compareToModified)));
     }
 }
