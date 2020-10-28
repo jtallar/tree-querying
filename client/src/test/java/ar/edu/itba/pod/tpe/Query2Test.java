@@ -9,6 +9,7 @@ import com.hazelcast.client.config.ClientConfig;
 import com.hazelcast.config.Config;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.IList;
 import com.hazelcast.core.IMap;
 import com.hazelcast.mapreduce.JobTracker;
 import com.hazelcast.mapreduce.KeyValueSource;
@@ -35,7 +36,7 @@ public class Query2Test {
 
     private HazelcastInstance member, client;
     private JobTracker jobTracker;
-    private IMap<Neighbourhood, List<Tree>> hzMap;
+    private IList<Tree> hzList;
 
     @Before
     public void setUp() {
@@ -45,9 +46,9 @@ public class Query2Test {
         client = HazelcastClient.newHazelcastClient(clientConfig);
 
         jobTracker = client.getJobTracker("g6-test-job-query2");
-        hzMap = client.getMap("g6-test-map-query2");
+        hzList = client.getList("g6-test-list-query2");
 
-        hzMap.clear();
+        hzList.clear();
     }
 
     @After
@@ -62,7 +63,7 @@ public class Query2Test {
 
         // Run Query
         final Map<String,ComparablePair<String,Long>> result =
-                Query2.runQuery(jobTracker.newJob(KeyValueSource.fromMap(hzMap)), neigh, 1);
+                Query2.runQuery(jobTracker.newJob(KeyValueSource.fromList(hzList)), neigh, 1);
 
         // Assertions
         assertEquals(0, result.size());
@@ -78,19 +79,15 @@ public class Query2Test {
             neigh.put(neighbourhood,POPULATION);
         }
 
-        Map<Neighbourhood, List<Tree>> map = new HashMap<>();
-        Neighbourhood n = new Neighbourhood(OTHER_NEIGHBOURHOOD);
         List<Tree> trees = new ArrayList<>();
         for (int i = 0; i < TREES_QTY ; i++) {
-            trees.add(new Tree(STREET_NAME, TREE_NAME, DIAMETER));
+            trees.add(new Tree(OTHER_NEIGHBOURHOOD, STREET_NAME, TREE_NAME, DIAMETER));
         }
-
-        map.put(n,trees);
-        hzMap.putAll(map);
+        hzList.addAll(trees);
 
         // Run Query
         final Map<String,ComparablePair<String,Long>> result =
-                Query2.runQuery(jobTracker.newJob(KeyValueSource.fromMap(hzMap)), neigh, 1);
+                Query2.runQuery(jobTracker.newJob(KeyValueSource.fromList(hzList)), neigh, 1);
 
         // Assertions
         assertEquals(0, result.size());
@@ -105,19 +102,15 @@ public class Query2Test {
             neigh.put(neighbourhood,POPULATION);
         }
 
-        Map<Neighbourhood, List<Tree>> map = new HashMap<>();
-        Neighbourhood n = new Neighbourhood(neighbourhoods[0]);
         List<Tree> trees = new ArrayList<>();
         for (int i = 0; i < TREES_QTY ; i++) {
-            trees.add(new Tree(STREET_NAME, TREE_NAME, DIAMETER));
+            trees.add(new Tree(neighbourhoods[0], STREET_NAME, TREE_NAME, DIAMETER));
         }
-
-        map.put(n,trees);
-        hzMap.putAll(map);
+        hzList.addAll(trees);
 
         // Run Query
         final Map<String,ComparablePair<String,Long>> result =
-                Query2.runQuery(jobTracker.newJob(KeyValueSource.fromMap(hzMap)), neigh, 1);
+                Query2.runQuery(jobTracker.newJob(KeyValueSource.fromList(hzList)), neigh, 1);
 
         // Assertions
         assertEquals(1, result.size());
@@ -133,24 +126,17 @@ public class Query2Test {
             neigh.put(neighbourhood,POPULATION);
         }
 
-        Map<Neighbourhood, List<Tree>> map = new HashMap<>();
-        Neighbourhood n = new Neighbourhood(neighbourhoods[0]);
-        Neighbourhood m = new Neighbourhood(neighbourhoods[1]);
-        Neighbourhood s = new Neighbourhood(neighbourhoods[2]);
         List<Tree> trees = new ArrayList<>();
         for (int i = 0; i < TREES_QTY ; i++) {
-            trees.add(new Tree(STREET_NAME, TREE_NAME, DIAMETER));
+            trees.add(new Tree(neighbourhoods[i], STREET_NAME, TREE_NAME, DIAMETER));
+            trees.add(new Tree(neighbourhoods[i], STREET_NAME, TREE_NAME, DIAMETER));
+            trees.add(new Tree(neighbourhoods[i], STREET_NAME, TREE_NAME, DIAMETER));
         }
-
-        map.put(n,trees);
-        map.put(m,trees);
-        map.put(s,trees);
-
-        hzMap.putAll(map);
+        hzList.addAll(trees);
 
         // Run Query
         final Map<String,ComparablePair<String,Long>> result =
-                Query2.runQuery(jobTracker.newJob(KeyValueSource.fromMap(hzMap)), neigh, 1);
+                Query2.runQuery(jobTracker.newJob(KeyValueSource.fromList(hzList)), neigh, 1);
 
         // Assertions
         assertEquals(TREES_QTY, result.size());
@@ -165,24 +151,17 @@ public class Query2Test {
             neigh.put(neighbourhood,POPULATION);
         }
 
-        Map<Neighbourhood, List<Tree>> map = new HashMap<>();
-        Neighbourhood n = new Neighbourhood(neighbourhoods[0]);
-        Neighbourhood m = new Neighbourhood(neighbourhoods[1]);
-        Neighbourhood s = new Neighbourhood(neighbourhoods[2]);
         List<Tree> trees = new ArrayList<>();
         for (int i = 0; i < TREES_QTY ; i++) {
-            trees.add(new Tree(STREET_NAME, TREE_NAME, DIAMETER));
+            trees.add(new Tree(neighbourhoods[i], STREET_NAME, TREE_NAME, DIAMETER));
+            trees.add(new Tree(neighbourhoods[i], STREET_NAME, TREE_NAME, DIAMETER));
+            trees.add(new Tree(neighbourhoods[i], STREET_NAME, TREE_NAME, DIAMETER));
         }
-
-        map.put(n,trees);
-        map.put(m,trees);
-        map.put(s,trees);
-
-        hzMap.putAll(map);
+        hzList.addAll(trees);
 
         // Run Query
         final Map<String,ComparablePair<String,Long>> result =
-                Query2.runQuery(jobTracker.newJob(KeyValueSource.fromMap(hzMap)), neigh, 4);
+                Query2.runQuery(jobTracker.newJob(KeyValueSource.fromList(hzList)), neigh, 4);
 
         // Assertions
         assertEquals(0, result.size());

@@ -2,9 +2,7 @@ package ar.edu.itba.pod.tpe.client.queries;
 
 import ar.edu.itba.pod.tpe.client.utils.ThrowableBiConsumer;
 import ar.edu.itba.pod.tpe.collators.Query2Collator;
-import ar.edu.itba.pod.tpe.keyPredicates.NeighbourhoodKeyPredicate;
 import ar.edu.itba.pod.tpe.mappers.StreetTreeMapper;
-import ar.edu.itba.pod.tpe.models.Neighbourhood;
 import ar.edu.itba.pod.tpe.models.Tree;
 import ar.edu.itba.pod.tpe.reducers.SumReducerFactory;
 import ar.edu.itba.pod.tpe.utils.ComparablePair;
@@ -13,7 +11,6 @@ import com.hazelcast.mapreduce.JobCompletableFuture;
 import org.apache.commons.csv.CSVPrinter;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -31,12 +28,12 @@ public class Query2 {
      * @throws InterruptedException
      * @throws ExecutionException
      */
-    public static Map<String,ComparablePair<String,Long>> runQuery(Job<Neighbourhood, List<Tree>> job, Map<String, Long>  neighbourhoods, long min)
+    public static Map<String,ComparablePair<String,Long>> runQuery(Job<String, Tree> job, Map<String, Long>  neighbourhoods, long min)
             throws InterruptedException, ExecutionException {
 
         final JobCompletableFuture<Map<String,ComparablePair<String,Long>>> future = job
-                .keyPredicate(new NeighbourhoodKeyPredicate(neighbourhoods))
-                .mapper(new StreetTreeMapper())
+//                .keyPredicate(new NeighbourhoodKeyPredicate(neighbourhoods))
+                .mapper(new StreetTreeMapper(neighbourhoods))
                 .reducer(new SumReducerFactory<>())
                 .submit(new Query2Collator(min));
         return future.get();

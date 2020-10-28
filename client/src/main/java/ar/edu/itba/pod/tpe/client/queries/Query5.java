@@ -35,7 +35,7 @@ public class Query5 {
      * @throws InterruptedException
      * @throws ExecutionException
      */
-    public static SortedSet<ComparableTrio<Long, String, String>> runQuery(Job<Neighbourhood, List<Tree>> job, JobTracker jobTracker, HazelcastInstance hz)
+    public static SortedSet<ComparableTrio<Long, String, String>> runQuery(Job<String, Tree> job, JobTracker jobTracker, HazelcastInstance hz)
             throws InterruptedException, ExecutionException {
 
         final IMap<String, Long> map = hz.getMap("g6-map-query5-aux");
@@ -66,7 +66,7 @@ public class Query5 {
      * @throws InterruptedException
      * @throws ExecutionException
      */
-    private static Map<String, Long> runFirstMapReduce(Job<Neighbourhood, List<Tree>> job)
+    private static Map<String, Long> runFirstMapReduce(Job<String, Tree> job)
             throws InterruptedException, ExecutionException {
 
         final JobCompletableFuture<Map<String, Long>> future = job

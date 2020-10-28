@@ -5,13 +5,13 @@ import com.hazelcast.nio.ObjectDataOutput;
 import com.hazelcast.nio.serialization.DataSerializable;
 
 import java.io.IOException;
-import java.util.Objects;
 
 /**
  * Serializable Data class modeling the trees information.
  */
 public class Tree implements DataSerializable {
 
+    private String neighbourhoodName;
     private String streetName;
     private String commonName;
     private double diameter;
@@ -22,13 +22,16 @@ public class Tree implements DataSerializable {
         /** Empty constructor for Hazelcast */
     }
 
-    public Tree(String streetName, String commonName, double diameter) {
+    public Tree(String neighbourhoodName, String streetName, String commonName, double diameter) {
+        this.neighbourhoodName = neighbourhoodName;
         this.streetName = streetName;
         this.commonName = commonName;
         this.diameter = diameter;
     }
 
     /** Getters */
+
+    public String getNeighbourhoodName() { return neighbourhoodName; }
 
     public String getStreetName() {
         return streetName;
@@ -49,6 +52,7 @@ public class Tree implements DataSerializable {
      */
     @Override
     public void writeData(ObjectDataOutput out) throws IOException {
+        out.writeUTF(neighbourhoodName);
         out.writeUTF(streetName);
         out.writeUTF(commonName);
         out.writeDouble(diameter);
@@ -61,6 +65,7 @@ public class Tree implements DataSerializable {
      */
     @Override
     public void readData(ObjectDataInput in) throws IOException {
+        neighbourhoodName = in.readUTF();
         streetName = in.readUTF();
         commonName = in.readUTF();
         diameter = in.readDouble();
@@ -79,7 +84,8 @@ public class Tree implements DataSerializable {
         Tree tree = (Tree) o;
         return Double.compare(tree.diameter, diameter) == 0 &&
                 streetName.equals(tree.streetName) &&
-                commonName.equals(tree.commonName);
+                commonName.equals(tree.commonName) &&
+                neighbourhoodName.equals(tree.neighbourhoodName);
     }
 
     /**
@@ -90,6 +96,7 @@ public class Tree implements DataSerializable {
     public int hashCode() {
         return (streetName == null ? 0 : streetName.hashCode()) ^
                 (commonName == null ? 0: commonName.hashCode()) ^
+                (neighbourhoodName == null ? 0: neighbourhoodName.hashCode()) ^
                 Double.hashCode(diameter);
     }
 
@@ -100,6 +107,7 @@ public class Tree implements DataSerializable {
     @Override
     public String toString() {
         return "Tree{" +
+                "neighbourhoodName='" + neighbourhoodName + '\'' +
                 "streetName='" + streetName + '\'' +
                 ", commonName='" + commonName + '\'' +
                 ", diameter=" + diameter +

@@ -31,7 +31,7 @@ public class Query3 {
      * @throws InterruptedException
      * @throws ExecutionException
      */
-    public static NavigableSet<ComparablePair<Double, String>> runQuery(Job<Neighbourhood, List<Tree>> job, long limit)
+    public static NavigableSet<ComparablePair<Double, String>> runQuery(Job<String, Tree> job, long limit)
             throws InterruptedException, ExecutionException {
 
         final JobCompletableFuture<NavigableSet<ComparablePair<Double, String>>> future = job

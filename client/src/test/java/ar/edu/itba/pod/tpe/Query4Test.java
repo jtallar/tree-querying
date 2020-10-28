@@ -9,6 +9,7 @@ import com.hazelcast.client.config.ClientConfig;
 import com.hazelcast.config.Config;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.IList;
 import com.hazelcast.core.IMap;
 import com.hazelcast.mapreduce.JobTracker;
 import com.hazelcast.mapreduce.KeyValueSource;
@@ -32,7 +33,7 @@ public class Query4Test {
 
     private HazelcastInstance member, client;
     private JobTracker jobTracker;
-    private IMap<Neighbourhood, List<Tree>> hzMap;
+    private IList<Tree> hzList;
 
     @Before
     public void setUp() {
@@ -42,8 +43,8 @@ public class Query4Test {
         client = HazelcastClient.newHazelcastClient(clientConfig);
 
         jobTracker = client.getJobTracker("g6-test-job-query4");
-        hzMap = client.getMap("g6-test-map-query4");
-        hzMap.clear();
+        hzList = client.getList("g6-test-list-query4");
+        hzList.clear();
     }
 
     @After
@@ -56,7 +57,7 @@ public class Query4Test {
     public void testNoTrees() throws ExecutionException, InterruptedException {
         // Run Query
         final SortedSet<ComparablePair<String, String>> result =
-                Query4.runQuery(jobTracker.newJob(KeyValueSource.fromMap(hzMap)), TREE_NAME, 1);
+                Query4.runQuery(jobTracker.newJob(KeyValueSource.fromList(hzList)), TREE_NAME, 1);
 
         // Assertions
         assertEquals(0, result.size());
@@ -65,20 +66,18 @@ public class Query4Test {
     @Test
     public void testOtherTreeName() throws ExecutionException, InterruptedException {
         // Populate map
-        Map<Neighbourhood, List<Tree>> map = new HashMap<>();
+        List<Tree> list = new ArrayList<>();
         for (int i = 0; i < neighbourhoods.length; i++) {
-            Neighbourhood n = new Neighbourhood(neighbourhoods[i]);
-            map.put(n, new ArrayList<>());
             for (int j = 0; j <= i; j++) {
-                map.get(n).add(new Tree(STREET_NAME, TREE_NAME, DIAMETER));
-                map.get(n).add(new Tree(STREET_NAME, OTHER_TREE_NAME, DIAMETER));
+                list.add(new Tree(neighbourhoods[i], STREET_NAME, TREE_NAME, DIAMETER));
+                list.add(new Tree(neighbourhoods[i], STREET_NAME, OTHER_TREE_NAME, DIAMETER));
             }
         }
-        hzMap.putAll(map);
+        hzList.addAll(list);
 
         // Run Query
         final SortedSet<ComparablePair<String, String>> result =
-                Query4.runQuery(jobTracker.newJob(KeyValueSource.fromMap(hzMap)), THIRD_TREE_NAME, 1);
+                Query4.runQuery(jobTracker.newJob(KeyValueSource.fromList(hzList)), THIRD_TREE_NAME, 1);
 
         // Assertions
         assertEquals(0, result.size());
@@ -87,20 +86,18 @@ public class Query4Test {
     @Test
     public void testAllNeighbourhoodsMin1() throws ExecutionException, InterruptedException {
         // Populate map
-        Map<Neighbourhood, List<Tree>> map = new HashMap<>();
+        List<Tree> list = new ArrayList<>();
         for (int i = 0; i < neighbourhoods.length; i++) {
-            Neighbourhood n = new Neighbourhood(neighbourhoods[i]);
-            map.put(n, new ArrayList<>());
             for (int j = 0; j <= i; j++) {
-                map.get(n).add(new Tree(STREET_NAME, TREE_NAME, DIAMETER));
-                map.get(n).add(new Tree(STREET_NAME, OTHER_TREE_NAME, DIAMETER));
+                list.add(new Tree(neighbourhoods[i], STREET_NAME, TREE_NAME, DIAMETER));
+                list.add(new Tree(neighbourhoods[i], STREET_NAME, OTHER_TREE_NAME, DIAMETER));
             }
         }
-        hzMap.putAll(map);
+        hzList.addAll(list);
 
         // Run Query
         final SortedSet<ComparablePair<String, String>> result =
-                Query4.runQuery(jobTracker.newJob(KeyValueSource.fromMap(hzMap)), TREE_NAME, 1);
+                Query4.runQuery(jobTracker.newJob(KeyValueSource.fromList(hzList)), TREE_NAME, 1);
 
         // Assertions
         List<ComparablePair<String, String>> expected = Arrays.asList(
@@ -126,20 +123,18 @@ public class Query4Test {
     @Test
     public void testAllNeighbourhoodsMin2() throws ExecutionException, InterruptedException {
         // Populate map
-        Map<Neighbourhood, List<Tree>> map = new HashMap<>();
+        List<Tree> list = new ArrayList<>();
         for (int i = 0; i < neighbourhoods.length; i++) {
-            Neighbourhood n = new Neighbourhood(neighbourhoods[i]);
-            map.put(n, new ArrayList<>());
             for (int j = 0; j <= i; j++) {
-                map.get(n).add(new Tree(STREET_NAME, TREE_NAME, DIAMETER));
-                map.get(n).add(new Tree(STREET_NAME, OTHER_TREE_NAME, DIAMETER));
+                list.add(new Tree(neighbourhoods[i], STREET_NAME, TREE_NAME, DIAMETER));
+                list.add(new Tree(neighbourhoods[i], STREET_NAME, OTHER_TREE_NAME, DIAMETER));
             }
         }
-        hzMap.putAll(map);
+        hzList.addAll(list);
 
         // Run Query
         final SortedSet<ComparablePair<String, String>> result =
-                Query4.runQuery(jobTracker.newJob(KeyValueSource.fromMap(hzMap)), TREE_NAME, 2);
+                Query4.runQuery(jobTracker.newJob(KeyValueSource.fromList(hzList)), TREE_NAME, 2);
 
         // Assertions
         List<ComparablePair<String, String>> expected = Arrays.asList(
@@ -161,20 +156,18 @@ public class Query4Test {
     @Test
     public void testAllNeighbourhoodsMin3() throws ExecutionException, InterruptedException {
         // Populate map
-        Map<Neighbourhood, List<Tree>> map = new HashMap<>();
+        List<Tree> list = new ArrayList<>();
         for (int i = 0; i < neighbourhoods.length; i++) {
-            Neighbourhood n = new Neighbourhood(neighbourhoods[i]);
-            map.put(n, new ArrayList<>());
             for (int j = 0; j <= i; j++) {
-                map.get(n).add(new Tree(STREET_NAME, TREE_NAME, DIAMETER));
-                map.get(n).add(new Tree(STREET_NAME, OTHER_TREE_NAME, DIAMETER));
+                list.add(new Tree(neighbourhoods[i], STREET_NAME, TREE_NAME, DIAMETER));
+                list.add(new Tree(neighbourhoods[i], STREET_NAME, OTHER_TREE_NAME, DIAMETER));
             }
         }
-        hzMap.putAll(map);
+        hzList.addAll(list);
 
         // Run Query
         final SortedSet<ComparablePair<String, String>> result =
-                Query4.runQuery(jobTracker.newJob(KeyValueSource.fromMap(hzMap)), TREE_NAME, 3);
+                Query4.runQuery(jobTracker.newJob(KeyValueSource.fromList(hzList)), TREE_NAME, 3);
 
         // Assertions
         List<ComparablePair<String, String>> expected = Arrays.asList(
@@ -193,20 +186,18 @@ public class Query4Test {
     @Test
     public void testAllNeighbourhoodsMin4() throws ExecutionException, InterruptedException {
         // Populate map
-        Map<Neighbourhood, List<Tree>> map = new HashMap<>();
+        List<Tree> list = new ArrayList<>();
         for (int i = 0; i < neighbourhoods.length; i++) {
-            Neighbourhood n = new Neighbourhood(neighbourhoods[i]);
-            map.put(n, new ArrayList<>());
             for (int j = 0; j <= i; j++) {
-                map.get(n).add(new Tree(STREET_NAME, TREE_NAME, DIAMETER));
-                map.get(n).add(new Tree(STREET_NAME, OTHER_TREE_NAME, DIAMETER));
+                list.add(new Tree(neighbourhoods[i], STREET_NAME, TREE_NAME, DIAMETER));
+                list.add(new Tree(neighbourhoods[i], STREET_NAME, OTHER_TREE_NAME, DIAMETER));
             }
         }
-        hzMap.putAll(map);
+        hzList.addAll(list);
 
         // Run Query
         final SortedSet<ComparablePair<String, String>> result =
-                Query4.runQuery(jobTracker.newJob(KeyValueSource.fromMap(hzMap)), TREE_NAME, 4);
+                Query4.runQuery(jobTracker.newJob(KeyValueSource.fromList(hzList)), TREE_NAME, 4);
 
         // Assertions
         List<ComparablePair<String, String>> expected = Collections.singletonList(
@@ -223,20 +214,18 @@ public class Query4Test {
     @Test
     public void testAllNeighbourhoodsMin5() throws ExecutionException, InterruptedException {
         // Populate map
-        Map<Neighbourhood, List<Tree>> map = new HashMap<>();
+        List<Tree> list = new ArrayList<>();
         for (int i = 0; i < neighbourhoods.length; i++) {
-            Neighbourhood n = new Neighbourhood(neighbourhoods[i]);
-            map.put(n, new ArrayList<>());
             for (int j = 0; j <= i; j++) {
-                map.get(n).add(new Tree(STREET_NAME, TREE_NAME, DIAMETER));
-                map.get(n).add(new Tree(STREET_NAME, OTHER_TREE_NAME, DIAMETER));
+                list.add(new Tree(neighbourhoods[i], STREET_NAME, TREE_NAME, DIAMETER));
+                list.add(new Tree(neighbourhoods[i], STREET_NAME, OTHER_TREE_NAME, DIAMETER));
             }
         }
-        hzMap.putAll(map);
+        hzList.addAll(list);
 
         // Run Query
         final SortedSet<ComparablePair<String, String>> result =
-                Query4.runQuery(jobTracker.newJob(KeyValueSource.fromMap(hzMap)), TREE_NAME, 5);
+                Query4.runQuery(jobTracker.newJob(KeyValueSource.fromList(hzList)), TREE_NAME, 5);
 
         // Assertions
         assertEquals(0, result.size());

@@ -17,17 +17,17 @@ public class Parser {
     private static final String FILE_EXTENSION = ".csv";
 
     /**
-     * Reads the trees files for the given city and converts it to a map
+     * Reads the trees files for the given city and converts it to a list
      * @param directoryPath Directory where the files are (ends in /)
      * @param city The corresponding city
-     * @return The map with the neighbourhoods and list of trees
+     * @return The list of trees
      * @throws IOException
      */
-    public static Map<Neighbourhood, List<Tree>> parseTrees(String directoryPath, City city) throws IOException {
+    public static List<Tree> parseTrees(String directoryPath, City city) throws IOException {
         /** get file header indexes */
         int[] headersIndex = city.getHeadersIndex();
 
-        Map<Neighbourhood, List<Tree>> trees = new HashMap<>();
+        List<Tree> trees = new ArrayList<>();
 
         /** delete header */
         List<String> file = Files.readAllLines(Paths.get(directoryPath + TREES_FILE_PREFIX + city.getAbbreviation() + FILE_EXTENSION), StandardCharsets.ISO_8859_1)
@@ -36,16 +36,12 @@ public class Parser {
         /** analyze each line */
         file.forEach(line -> {
             String[] parse = line.split(";");
-            Neighbourhood neighbourhood = new Neighbourhood(parse[headersIndex[0]]);
-            Tree tree = new Tree(parse[headersIndex[1]], parse[headersIndex[2]], Double.parseDouble(parse[headersIndex[3]]));
-
-            trees.merge(neighbourhood, new ArrayList<>(), (prev, curr) -> { prev.add(tree); return prev; });
-
-//            trees.computeIfAbsent(neighbourhood, k -> new ArrayList<>());
-//            trees.get(neighbourhood).add(new Tree(parse[headersIndex[1]], parse[headersIndex[2]], Double.parseDouble(parse[headersIndex[3]])));
+            Tree tree = new Tree(parse[headersIndex[0]], parse[headersIndex[1]], parse[headersIndex[2]], Double.parseDouble(parse[headersIndex[3]]));
+            trees.add(tree);
         });
         return trees;
     }
+
 
     /**
      * Reads the neighbourhood files for the given city and converts it to a map
