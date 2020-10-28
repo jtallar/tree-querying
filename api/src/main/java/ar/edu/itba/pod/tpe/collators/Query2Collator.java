@@ -12,9 +12,11 @@ import java.util.*;
  */
 public class Query2Collator implements Collator<Map.Entry<Street, Long>, Map<String, ComparablePair<String, Long>>> {
     private final long min;
+    private final Map<String, Long> neighbourhoods;
 
-    public Query2Collator(long min) {
+    public Query2Collator(long min, Map<String, Long>  neighbourhoods) {
         this.min = min;
+        this.neighbourhoods = neighbourhoods;
     }
 
     @Override
@@ -22,7 +24,7 @@ public class Query2Collator implements Collator<Map.Entry<Street, Long>, Map<Str
 
         Map<String, ComparablePair<String,Long>> out = new TreeMap<>(String::compareTo);
         iterable.forEach(e -> {
-            if (e.getValue() < min) return;
+            if (!neighbourhoods.containsKey(e.getKey().getNeighbourhood()) || e.getValue() < min) return;
             ComparablePair<String, Long> pair = new ComparablePair<>(e.getKey().getStreet(), e.getValue());
             out.merge(e.getKey().getNeighbourhood(), pair, (prev, curr) -> (curr.getSecond() > prev.getSecond())? curr : prev);
         });

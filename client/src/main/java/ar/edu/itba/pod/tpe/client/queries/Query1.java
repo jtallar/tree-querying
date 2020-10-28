@@ -40,7 +40,7 @@ public class Query1 {
         };
 
         final JobCompletableFuture<NavigableSet<ComparablePair<Double, String>>> future = job
-                .keyPredicate(new NeighbourhoodKeyPredicate(neighbourhoods))
+//                .keyPredicate(new NeighbourhoodKeyPredicate(neighbourhoods))
                 .mapper(new NeighbourhoodTreeMapper())
                 .reducer(new SumReducerFactory<>())
                 .submit(new Query1Collator(neighbourhoods));

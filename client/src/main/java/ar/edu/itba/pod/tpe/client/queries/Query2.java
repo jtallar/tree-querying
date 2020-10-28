@@ -35,10 +35,10 @@ public class Query2 {
             throws InterruptedException, ExecutionException {
 
         final JobCompletableFuture<Map<String,ComparablePair<String,Long>>> future = job
-                .keyPredicate(new NeighbourhoodKeyPredicate(neighbourhoods))
+//                .keyPredicate(new NeighbourhoodKeyPredicate(neighbourhoods))
                 .mapper(new StreetTreeMapper())
                 .reducer(new SumReducerFactory<>())
-                .submit(new Query2Collator(min));
+                .submit(new Query2Collator(min, neighbourhoods));
         return future.get();
     }
 
