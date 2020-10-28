@@ -49,25 +49,25 @@ guardar los archivos de salida (queryX.csv y queryX.txt).
 - Para obtener el total de árboles por habitante (Query 1), se ejecuta **query1** con los parámetros 
 mencionados anteriormente. Por ejemplo:
 
-`./query1 -Dcity=VAN -Daddresses=192.168.0.10:5701 -DinPath=/home/julian/Desktop/POD/tpe2-g6/test-files/ -DoutPath=/home/julian/Desktop/POD/tpe2-g6/test-files/`
+`./query1 -Dcity=VAN -Daddresses='192.168.0.10:5701' -DinPath=/home/julian/Desktop/POD/tpe2-g6/test-files/ -DoutPath=/home/julian/Desktop/POD/tpe2-g6/test-files/`
 
 - Para obtener la calle con más árboles de cada barrio y mayores a un mínimo (Query 2), se ejecuta **query2** con los parámetros 
 mencionados anteriormente y un parámetro `-Dmin`, con un valor entero mayor a cero, que será el mínimo requerido (*exclusivo*). Por ejemplo:
 
-`./query2 -Dcity=VAN -Daddresses=192.168.0.10:5701 -DinPath=/home/julian/Desktop/POD/tpe2-g6/test-files/ -DoutPath=/home/julian/Desktop/POD/tpe2-g6/test-files/ -Dmin=300`
+`./query2 -Dcity=VAN -Daddresses='192.168.0.10:5701' -DinPath=/home/julian/Desktop/POD/tpe2-g6/test-files/ -DoutPath=/home/julian/Desktop/POD/tpe2-g6/test-files/ -Dmin=300`
 
 - Para obtener las n especies de árboles con mayor promedio de diámetro (Query 3), se ejecuta **query3** con los parámetros 
 mencionados anteriormente y un parámetro `-Dn`, con un valor entero mayor a cero, que será la cantidad de especies a listar (Top n). Por ejemplo:
 
-`./query3 -Dcity=VAN -Daddresses=192.168.0.10:5701 -DinPath=/home/julian/Desktop/POD/tpe2-g6/test-files/ -DoutPath=/home/julian/Desktop/POD/tpe2-g6/test-files/ -Dn=3`
+`./query3 -Dcity=VAN -Daddresses='192.168.0.10:5701' -DinPath=/home/julian/Desktop/POD/tpe2-g6/test-files/ -DoutPath=/home/julian/Desktop/POD/tpe2-g6/test-files/ -Dn=3`
 
 - Para obtener los pares de barrios que contengan al menos min árboles de una especie X (Query 4), se ejecuta **query4** con los parámetros 
 mencionados anteriormente, un parámetro `-Dmin`, con un valor entero mayor a cero que será el mínimo requerido (*inclusivo*), y un parámetro `-Dname`, con un 
 string que será el nombre de la especie a considerar. Por ejemplo:
 
-`./query4 -Dcity=VAN -Daddresses=192.168.0.10:5701 -DinPath=/home/julian/Desktop/POD/tpe2-g6/test-files/ -DoutPath=/home/julian/Desktop/POD/tpe2-g6/test-files/ -Dmin=11000 -Dname='Fraxinus pennsylvanica'`
+`./query4 -Dcity=VAN -Daddresses='192.168.0.10:5701' -DinPath=/home/julian/Desktop/POD/tpe2-g6/test-files/ -DoutPath=/home/julian/Desktop/POD/tpe2-g6/test-files/ -Dmin=11000 -Dname='Fraxinus pennsylvanica'`
  
 - Para obtener los pares de árboles que registran la misma cantidad de miles de árboles (Query 5), se ejecuta **query5** con los parámetros 
 mencionados anteriormente. Por ejemplo:
 
-`./query5 -Dcity=VAN -Daddresses=192.168.0.10:5701 -DinPath=/home/julian/Desktop/POD/tpe2-g6/test-files/ -DoutPath=/home/julian/Desktop/POD/tpe2-g6/test-files/`
+`./query5 -Dcity=VAN -Daddresses='192.168.0.10:5701' -DinPath=/home/julian/Desktop/POD/tpe2-g6/test-files/ -DoutPath=/home/julian/Desktop/POD/tpe2-g6/test-files/`
