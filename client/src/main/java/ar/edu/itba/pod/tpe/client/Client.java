@@ -110,14 +110,14 @@ public class Client {
         String[] clusterNodes = Optional.ofNullable(properties.getProperty(ADDRESS_PARAM)).orElse("").split(",");
         if (clusterNodes.length == 0) {
             throw new ArgumentException("No addresses provided.\nNode addresses must be supplied using -Daddresses and its format must be " +
-                    "xx.xx.xx.xx:XXXX;yy.yy.yy.yy:YYYY");
+                    "xx.xx.xx.xx:XXXX,yy.yy.yy.yy:YYYY");
         }
         for (String node : clusterNodes) {
             try {
                 ClientUtils.getInetAddress(node);
             } catch (URISyntaxException e) {
                 throw new ArgumentException("Invalid address.\nNode addresses must be supplied using -Daddresses and its format must be " +
-                        "xx.xx.xx.xx:XXXX;yy.yy.yy.yy:YYYY");
+                        "xx.xx.xx.xx:XXXX,yy.yy.yy.yy:YYYY");
             }
             clusterAddresses.add(node);
         }
