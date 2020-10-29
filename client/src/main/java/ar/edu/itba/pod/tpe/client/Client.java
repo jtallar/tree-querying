@@ -69,7 +69,7 @@ public class Client {
         final IList<Tree> list = hz.getList("g6-list-" + query);
         list.clear();
         logger.info("Inicio de la lectura del archivo arboles");
-        System.out.println("Iniciando lectura del archivo de arboles...");
+        System.out.println("Reading trees file...");
         try {
             list.addAll(Parser.parseTrees(inPath, city));
         } catch (IOException e) {
@@ -79,7 +79,7 @@ public class Client {
         }
         logger.info("Fin de la lectura del archivo arboles");
 
-        System.out.println("Iniciando trabajo de map/reduce para la " + query + "...");
+        System.out.println("Starting map/reduce job for " + query + "...");
         logger.info("Inicio del trabajo map/reduce");
         final KeyValueSource<String, Tree> source = KeyValueSource.fromList(list);
         final Job<String, Tree> job = jobTracker.newJob(source);
@@ -97,7 +97,7 @@ public class Client {
         logger.info("Fin del trabajo map/reduce");
 
         hz.shutdown();
-        System.out.println(query + " terminada, saliendo...");
+        System.out.println(query + " ended, exiting...");
     }
 
     private static void argumentParsing() throws ArgumentException {
